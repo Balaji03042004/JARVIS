@@ -1,0 +1,752 @@
+[
+  {
+    "action": "chat_message",
+    "detail": "what is today news you have",
+    "timestamp": "2026-06-06T07:05:41.123Z"
+  },
+  {
+    "action": "image_generated",
+    "detail": "human photo",
+    "timestamp": "2026-06-06T07:06:49.730Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "Hi jarvis what are feature's do you have tell to me",
+    "timestamp": "2026-06-06T08:02:53.264Z"
+  },
+  {
+    "action": "reminder_added",
+    "detail": "i need to make a call for suthakran",
+    "timestamp": "2026-06-06T08:06:12.219Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "Hello jarvis",
+    "timestamp": "2026-06-06T09:15:24.278Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "tell today news",
+    "timestamp": "2026-06-06T09:15:33.967Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "more detail baout trump to meet ai leaders",
+    "timestamp": "2026-06-06T09:16:17.585Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "Do you have database connection now",
+    "timestamp": "2026-06-06T12:00:36.664Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "I am a developer",
+    "timestamp": "2026-06-06T12:13:05.434Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "hello jarvis how are you?",
+    "timestamp": "2026-06-06T12:13:32.557Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "today news details",
+    "timestamp": "2026-06-06T12:13:54.949Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "Travels play some song",
+    "timestamp": "2026-06-06T12:35:20.607Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "change next song",
+    "timestamp": "2026-06-06T12:35:30.262Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "next",
+    "timestamp": "2026-06-06T12:35:35.132Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "previous one",
+    "timestamp": "2026-06-06T12:35:43.299Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "play news today",
+    "timestamp": "2026-06-06T12:35:51.143Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "play today news in YouTube",
+    "timestamp": "2026-06-06T12:36:00.599Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "English news",
+    "timestamp": "2026-06-06T12:36:08.703Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "open YouTube",
+    "timestamp": "2026-06-06T12:36:19.067Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "play this video",
+    "timestamp": "2026-06-06T12:36:49.582Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "open spotify",
+    "timestamp": "2026-06-06T12:37:05.492Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "open spotify",
+    "timestamp": "2026-06-06T12:37:13.092Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "sale starts",
+    "timestamp": "2026-06-06T12:37:26.613Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "play Spotify in web",
+    "timestamp": "2026-06-06T12:37:43.930Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "open Spotify web",
+    "timestamp": "2026-06-06T12:37:52.412Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "play",
+    "timestamp": "2026-06-06T12:37:59.437Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "music in Spotify web",
+    "timestamp": "2026-06-06T12:38:01.149Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "change next song",
+    "timestamp": "2026-06-06T12:38:28.161Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "play youth song",
+    "timestamp": "2026-06-06T12:38:52.068Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "cute song",
+    "timestamp": "2026-06-06T12:39:02.985Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "stop stop",
+    "timestamp": "2026-06-06T12:39:17.003Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "Aaja Aaja",
+    "timestamp": "2026-06-06T12:40:33.829Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "open Notepad",
+    "timestamp": "2026-06-06T12:40:56.412Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "close notepad",
+    "timestamp": "2026-06-06T12:41:02.498Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "close notepad",
+    "timestamp": "2026-06-06T12:41:12.033Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "video 298 ringtone",
+    "timestamp": "2026-06-06T12:41:33.752Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "mera number",
+    "timestamp": "2026-06-06T12:42:42.317Z"
+  },
+  {
+    "action": "code_run",
+    "detail": "javascript",
+    "timestamp": "2026-06-06T13:49:06.075Z"
+  },
+  {
+    "action": "screen_recorded",
+    "detail": "1.3 MB",
+    "timestamp": "2026-06-06T13:52:42.378Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "play latest tamil songs in spotify web",
+    "timestamp": "2026-06-06T13:53:54.566Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "play vedios in local system",
+    "timestamp": "2026-06-06T13:54:50.755Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "dude song play",
+    "timestamp": "2026-06-06T13:55:30.697Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "play dude song",
+    "timestamp": "2026-06-06T13:55:52.833Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "open cemara",
+    "timestamp": "2026-06-06T14:04:28.251Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "open camera",
+    "timestamp": "2026-06-06T14:04:45.994Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "open youtube",
+    "timestamp": "2026-06-06T14:20:06.118Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "play this gold ETF video",
+    "timestamp": "2026-06-06T14:20:27.512Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "available",
+    "timestamp": "2026-06-06T14:21:45.784Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "sexy video",
+    "timestamp": "2026-06-06T14:23:15.782Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "open YouTube",
+    "timestamp": "2026-06-06T14:26:20.956Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "play this gold ETF video",
+    "timestamp": "2026-06-06T14:26:33.795Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "play this cockroach Janata Party protest video",
+    "timestamp": "2026-06-06T14:27:11.512Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "play",
+    "timestamp": "2026-06-06T14:27:20.166Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "BF video",
+    "timestamp": "2026-06-06T14:27:29.534Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "play India today",
+    "timestamp": "2026-06-06T14:28:00.592Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "unpause",
+    "timestamp": "2026-06-06T14:28:16.400Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "can you play",
+    "timestamp": "2026-06-06T14:30:01.271Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "CM Vijay's news",
+    "timestamp": "2026-06-06T14:30:23.944Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "latest updates",
+    "timestamp": "2026-06-06T14:30:37.783Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "ok play the Trump media leaders video",
+    "timestamp": "2026-06-06T14:30:48.701Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "play",
+    "timestamp": "2026-06-06T14:31:01.790Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "play",
+    "timestamp": "2026-06-06T14:31:12.783Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "next video",
+    "timestamp": "2026-06-06T14:33:49.483Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "tamil music",
+    "timestamp": "2026-06-06T14:36:02.845Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "play tamil music in youtube",
+    "timestamp": "2026-06-06T14:36:23.887Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "open YouTube",
+    "timestamp": "2026-06-06T14:40:09.001Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "Jarvis",
+    "timestamp": "2026-06-06T14:40:41.145Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "video how mustard oil design system materials",
+    "timestamp": "2026-06-06T14:40:50.795Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "past this video",
+    "timestamp": "2026-06-06T14:41:21.562Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "offset video",
+    "timestamp": "2026-06-06T14:42:42.031Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "play today news video",
+    "timestamp": "2026-06-06T14:42:58.876Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "play",
+    "timestamp": "2026-06-06T14:43:20.901Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "play",
+    "timestamp": "2026-06-06T14:43:32.319Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "comments",
+    "timestamp": "2026-06-06T14:45:14.779Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "open webpage developer tool",
+    "timestamp": "2026-06-06T14:55:52.977Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "list your apps what is install",
+    "timestamp": "2026-06-06T14:56:26.799Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "jarvis what are the features do you have now and then what are the feature you want to improve",
+    "timestamp": "2026-06-06T15:03:37.103Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "open spotify",
+    "timestamp": "2026-06-06T15:12:10.310Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "list your apps",
+    "timestamp": "2026-06-06T15:12:25.284Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "open",
+    "timestamp": "2026-06-06T15:12:36.752Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "open open office",
+    "timestamp": "2026-06-06T15:12:47.556Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "do you have phone access",
+    "timestamp": "2026-06-06T15:13:22.095Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "can able to interact with WhatsApp",
+    "timestamp": "2026-06-06T15:13:47.514Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "yes pls open whats app web",
+    "timestamp": "2026-06-06T15:14:19.887Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "open whats app web application in chrome",
+    "timestamp": "2026-06-06T15:15:04.764Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "open whats app web application in chrome",
+    "timestamp": "2026-06-06T15:15:24.928Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "open youtube",
+    "timestamp": "2026-06-06T15:15:54.260Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "go same you tube page which you opened already",
+    "timestamp": "2026-06-06T15:16:29.956Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "hello Jarvis",
+    "timestamp": "2026-06-06T15:26:57.438Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "list out today's news",
+    "timestamp": "2026-06-06T15:27:11.801Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "bol news",
+    "timestamp": "2026-06-06T15:27:21.487Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "ok describe about the Ukraine drones attack",
+    "timestamp": "2026-06-06T15:27:36.750Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "OK what is your last level conversation",
+    "timestamp": "2026-06-06T15:27:50.739Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "Oppo Oppo",
+    "timestamp": "2026-06-06T15:28:41.587Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "ok do you have any idea about smartphones",
+    "timestamp": "2026-06-06T15:28:56.853Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "ok I need to know about Android phones",
+    "timestamp": "2026-06-06T15:29:08.168Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "ke Jave suggest me one good smartphone",
+    "timestamp": "2026-06-06T15:30:10.942Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "price of that mobile",
+    "timestamp": "2026-06-06T15:30:26.463Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "some photos of",
+    "timestamp": "2026-06-06T15:30:41.883Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "show some photos of the Samsung Galaxy s23",
+    "timestamp": "2026-06-06T15:30:55.115Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "ok proceed open the browser",
+    "timestamp": "2026-06-06T15:31:04.310Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "no no no no no no no no no no",
+    "timestamp": "2026-06-06T15:31:13.024Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "no I am asking like please open the Samsung Galaxy smartphones related photos",
+    "timestamp": "2026-06-06T15:31:26.592Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "tell the features of",
+    "timestamp": "2026-06-06T15:31:46.307Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "about 5G connectivity",
+    "timestamp": "2026-06-06T15:32:22.924Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "what is the difference between 5G and 4G phones",
+    "timestamp": "2026-06-06T15:32:37.122Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "good good",
+    "timestamp": "2026-06-06T15:33:00.653Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "what is the difference between iPhone and Android phone",
+    "timestamp": "2026-06-06T15:33:14.773Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "ok now you can tell",
+    "timestamp": "2026-06-06T15:33:32.172Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "please",
+    "timestamp": "2026-06-06T15:33:42.492Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "please read",
+    "timestamp": "2026-06-06T15:34:18.313Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "no please read our previous conversation",
+    "timestamp": "2026-06-06T15:34:31.268Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "hey Jarvis",
+    "timestamp": "2026-06-06T15:35:07.147Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "hey Jarvis what are the features do you have right now",
+    "timestamp": "2026-06-06T15:35:27.032Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "hey Jarvis what is my name",
+    "timestamp": "2026-06-06T15:36:17.605Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "hey jarv",
+    "timestamp": "2026-06-06T15:36:29.043Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "what is the information do you have about me",
+    "timestamp": "2026-06-06T15:36:38.136Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "find Jarvis",
+    "timestamp": "2026-06-06T15:37:28.831Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "Ok Jarvis you can able to access the Wikipedia",
+    "timestamp": "2026-06-06T15:38:12.154Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "I need some histories in Wikipedia",
+    "timestamp": "2026-06-06T15:38:33.776Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "have any idea about the UPSC examination",
+    "timestamp": "2026-06-06T15:38:45.123Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "OK Jarvis what are the",
+    "timestamp": "2026-06-06T15:39:27.585Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "I am asking what are the things which we discussed previously please list out the those things to me",
+    "timestamp": "2026-06-06T15:39:43.999Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "can you do that UPSC based content",
+    "timestamp": "2026-06-06T15:40:34.266Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "you get this information",
+    "timestamp": "2026-06-06T15:40:45.518Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "type of database do you use",
+    "timestamp": "2026-06-06T15:41:04.170Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "ok 24 now I will provide the file based database to you helpful to you",
+    "timestamp": "2026-06-06T15:43:03.784Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "Ok Jarvis I planned to actually develop based on your train and test data which when I provide the train data based on the train data you will train first and I will provide the test data to you based",
+    "timestamp": "2026-06-06T15:43:41.136Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "hey Jarvis do you have any idea about machine learning models",
+    "timestamp": "2026-06-06T15:44:45.906Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "linear regression",
+    "timestamp": "2026-06-06T15:45:39.896Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "okay good",
+    "timestamp": "2026-06-06T15:46:28.260Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "can i able to build humanid robot",
+    "timestamp": "2026-06-06T15:49:52.217Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "no jarvis",
+    "timestamp": "2026-06-06T15:51:24.823Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "jarvis now my main aim is to develop you completely that is my first thing",
+    "timestamp": "2026-06-06T15:52:50.331Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "what is our previous conversation",
+    "timestamp": "2026-06-06T15:57:36.601Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "Hello jarvis",
+    "timestamp": "2026-06-10T08:41:29.978Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "today news details",
+    "timestamp": "2026-06-10T08:41:43.790Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "describe more about world news",
+    "timestamp": "2026-06-10T08:42:29.793Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "Javas",
+    "timestamp": "2026-06-10T08:45:48.894Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "hi Jarvis",
+    "timestamp": "2026-06-12T11:55:10.606Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "do you know Harris Reno",
+    "timestamp": "2026-06-12T11:55:27.241Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "no information about a person",
+    "timestamp": "2026-06-12T11:55:35.010Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "how to install bo",
+    "timestamp": "2026-06-12T11:55:43.210Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "who is the CEO of Google",
+    "timestamp": "2026-06-12T11:55:51.438Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "open",
+    "timestamp": "2026-06-12T11:56:02.951Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "CEO of niyojan",
+    "timestamp": "2026-06-12T11:56:10.652Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "CEO of Newgen",
+    "timestamp": "2026-06-12T11:56:19.205Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "download a paid version",
+    "timestamp": "2026-06-12T11:58:39.639Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "Instagram clone Panna",
+    "timestamp": "2026-06-12T11:58:48.278Z"
+  },
+  {
+    "action": "chat_message",
+    "detail": "SQL software",
+    "timestamp": "2026-06-12T11:59:17.502Z"
+  }
+]

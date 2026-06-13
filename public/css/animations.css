@@ -1,0 +1,97 @@
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px currentColor; }
+  50%       { opacity: 0.4; box-shadow: none; }
+}
+@keyframes pulse-ring {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,184,0,0.4); }
+  50%     { box-shadow: 0 0 0 7px rgba(255,184,0,0); }
+}
+@keyframes pulse-red {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,68,68,0.5); }
+  50%     { box-shadow: 0 0 0 7px rgba(255,68,68,0); }
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-8px); }
+}
+@keyframes msg-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes bounce {
+  0%,80%,100% { transform: scale(0.55); opacity: 0.3; }
+  40%         { transform: scale(1);    opacity: 1; }
+}
+@keyframes slide-in-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes slide-in-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes glow-pulse {
+  0%,100% { text-shadow: 0 0 10px rgba(255,184,0,0.5); }
+  50%     { text-shadow: 0 0 28px rgba(255,184,0,0.9), 0 0 50px rgba(255,184,0,0.4); }
+}
+@keyframes progress-stripe {
+  from { background-position: 0 0; }
+  to   { background-position: 40px 0; }
+}
+
+/* ── Pro Animations ── */
+@keyframes rotate-slow {
+  to { transform: rotate(360deg); }
+}
+@keyframes rotate-slow-rev {
+  to { transform: rotate(-360deg); }
+}
+@keyframes hex-breathe {
+  0%,100% { opacity: 0.2; transform: scale(1); }
+  50%     { opacity: 0.5; transform: scale(1.06); }
+}
+@keyframes scan-line {
+  0%   { left: -100%; }
+  100% { left: 110%; }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+@keyframes border-glow {
+  0%,100% { box-shadow: 0 0 0 2px rgba(255,184,0,0.07), 0 0 20px rgba(255,59,48,0.06); }
+  50%     { box-shadow: 0 0 0 3px rgba(255,184,0,0.14), 0 0 36px rgba(255,59,48,0.1); }
+}
+@keyframes toast-in {
+  from { transform: translateX(110%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+@keyframes neon-flicker {
+  0%,100% { opacity: 1; }
+  92%     { opacity: 1; }
+  93%     { opacity: 0.5; }
+  94%     { opacity: 1; }
+  96%     { opacity: 0.8; }
+  97%     { opacity: 1; }
+}
+@keyframes hud-boot {
+  0%   { clip-path: inset(100% 0 0 0); opacity: 0; }
+  40%  { clip-path: inset(0 0 60% 0); opacity: 0.8; }
+  100% { clip-path: inset(0 0 0 0);   opacity: 1; }
+}
+@keyframes gold-sweep {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+

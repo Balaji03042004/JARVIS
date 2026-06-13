@@ -1,0 +1,2124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>JARVIS — AI Command Assistant</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;800&display=swap');
+
+  :root {
+    --bg: #07090f;
+    --panel: #0d1117;
+    --border: #1a2a3a;
+    --accent: #00e5ff;
+    --accent2: #7b2fff;
+    --green: #00ff88;
+    --red: #ff3c5a;
+    --text: #c9d8e8;
+    --dim: #4a6070;
+    --glow: 0 0 12px rgba(0,229,255,0.35);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none; z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(123,47,255,0.08) 0%, transparent 70%);
+    top: -200px; right: -100px;
+    pointer-events: none; z-index: 0;
+  }
+
+  header {
+    position: relative; z-index: 10;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(13,17,23,0.95);
+    backdrop-filter: blur(10px);
+  }
+
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-icon {
+    width: 36px; height: 36px;
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    animation: pulse 3s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 10px rgba(0,229,255,0.3); }
+    50% { box-shadow: 0 0 22px rgba(0,229,255,0.7); }
+  }
+  .logo-text {
+    font-size: 22px; font-weight: 800; letter-spacing: 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .logo-sub { font-family: 'Share Tech Mono'; font-size: 10px; color: var(--dim); letter-spacing: 2px; }
+
+  .status-bar { display: flex; align-items: center; gap: 18px; }
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green); box-shadow: 0 0 8px var(--green);
+    animation: blink 2s step-start infinite;
+  }
+  @keyframes blink { 50% { opacity: 0.3; } }
+  .status-label { font-family: 'Share Tech Mono'; font-size: 11px; color: var(--dim); letter-spacing: 1px; }
+
+  .main-layout {
+    position: relative; z-index: 5;
+    display: flex; flex: 1;
+    height: calc(100vh - 65px);
+    overflow: hidden;
+  }
+
+  .sidebar {
+    width: 220px; flex-shrink: 0;
+    border-right: 1px solid var(--border);
+    background: rgba(13,17,23,0.7);
+    padding: 20px 16px;
+    display: flex; flex-direction: column; gap: 6px;
+    overflow-y: auto;
+  }
+  .sidebar-title {
+    font-family: 'Share Tech Mono'; font-size: 10px;
+    color: var(--dim); letter-spacing: 2px;
+    margin-bottom: 10px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+  .mode-btn {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--dim); font-family: 'Exo 2'; font-size: 13px;
+    cursor: pointer; transition: all 0.2s; text-align: left;
+  }
+  .mode-btn:hover { background: rgba(0,229,255,0.06); color: var(--text); border-color: var(--border); }
+  .mode-btn.active {
+    background: rgba(0,229,255,0.1); border-color: var(--accent);
+    color: var(--accent); box-shadow: inset 0 0 12px rgba(0,229,255,0.08);
+  }
+  .mode-icon { font-size: 16px; }
+  .mode-sub { font-family: 'Share Tech Mono'; font-size: 9px; color: var(--dim); margin-top: 2px; }
+
+  .chat-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  .messages {
+    flex: 1; overflow-y: auto;
+    padding: 24px 28px;
+    display: flex; flex-direction: column; gap: 18px;
+    scroll-behavior: smooth;
+  }
+  .messages::-webkit-scrollbar { width: 4px; }
+  .messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  .welcome {
+    text-align: center; padding: 50px 20px;
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+  }
+  .welcome-icon { font-size: 52px; animation: float 4s ease-in-out infinite; }
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+  .welcome h2 { font-size: 26px; font-weight: 800; letter-spacing: 2px; color: var(--accent); }
+  .welcome p { color: var(--dim); font-size: 14px; max-width: 480px; line-height: 1.7; }
+  .chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 8px; }
+  .chip {
+    padding: 7px 14px; border-radius: 20px;
+    border: 1px solid var(--border); background: var(--panel);
+    color: var(--dim); font-size: 12px; cursor: pointer;
+    font-family: 'Share Tech Mono'; transition: all 0.2s;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,229,255,0.06); }
+
+  .msg { display: flex; gap: 14px; animation: msgIn 0.3s ease; }
+  @keyframes msgIn { from { opacity:0; transform: translateY(10px); } to { opacity:1; transform: translateY(0); } }
+  .msg.user { flex-direction: row-reverse; }
+
+  .avatar {
+    width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 16px;
+  }
+  .avatar.ai { background: linear-gradient(135deg, rgba(0,229,255,0.2), rgba(123,47,255,0.2)); border: 1px solid var(--accent); }
+  .avatar.user { background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.4); }
+
+  .bubble {
+    max-width: 76%; padding: 14px 18px; border-radius: 12px;
+    font-size: 14px; line-height: 1.7;
+  }
+  .bubble.ai { background: var(--panel); border: 1px solid var(--border); border-top-left-radius: 2px; color: var(--text); }
+  .bubble.user { background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.25); border-top-right-radius: 2px; color: var(--green); text-align: right; }
+
+  .bubble pre {
+    margin-top: 10px;
+    background: #050810;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    overflow-x: auto;
+    font-family: 'Share Tech Mono'; font-size: 12px;
+    color: var(--accent); line-height: 1.6;
+  }
+  .bubble code { font-family: 'Share Tech Mono'; color: var(--accent); font-size: 13px; }
+  .code-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 10px; margin-bottom: -4px;
+    font-family: 'Share Tech Mono'; font-size: 10px; color: var(--dim);
+  }
+  .copy-btn {
+    padding: 3px 10px; border-radius: 4px;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--dim); font-size: 10px; cursor: pointer; transition: all 0.2s;
+  }
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .typing { display: flex; gap: 5px; align-items: center; padding: 10px 0; }
+  .typing span {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent); opacity: 0.4;
+    animation: bounce 1.2s ease-in-out infinite;
+  }
+  .typing span:nth-child(2) { animation-delay: 0.2s; }
+  .typing span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%,80%,100% { transform: scale(0.6); opacity:0.3; } 40% { transform: scale(1); opacity:1; } }
+
+  .input-area {
+    padding: 18px 28px 22px;
+    border-top: 1px solid var(--border);
+    background: rgba(13,17,23,0.95);
+    backdrop-filter: blur(10px);
+  }
+  .input-wrapper {
+    display: flex; align-items: flex-end; gap: 10px;
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 14px; padding: 12px 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .input-wrapper:focus-within { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,229,255,0.12); }
+  textarea {
+    flex: 1; background: transparent; border: none; outline: none;
+    color: var(--text); font-family: 'Exo 2'; font-size: 14px;
+    resize: none; line-height: 1.5; max-height: 140px; min-height: 22px;
+  }
+  textarea::placeholder { color: var(--dim); }
+  .btn-group { display: flex; gap: 8px; align-items: flex-end; }
+
+  .mic-btn, .send-btn, .speaker-btn {
+    width: 40px; height: 40px; border-radius: 10px;
+    border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; transition: all 0.2s; flex-shrink: 0;
+  }
+  .mic-btn { background: rgba(123,47,255,0.15); border: 1px solid rgba(123,47,255,0.4); }
+  .mic-btn:hover { background: rgba(123,47,255,0.3); }
+  .mic-btn.listening { background: rgba(255,60,90,0.2); border-color: var(--red); animation: pulse-red 1s infinite; }
+  @keyframes pulse-red { 0%,100% { box-shadow: 0 0 0 0 rgba(255,60,90,0.4); } 50% { box-shadow: 0 0 0 8px rgba(255,60,90,0); } }
+
+  .speaker-btn { background: rgba(0,229,255,0.15); border: 1px solid rgba(0,229,255,0.4); }
+  .speaker-btn:hover { background: rgba(0,229,255,0.3); }
+  .speaker-btn.active { background: rgba(0,229,255,0.3); border-color: var(--accent); animation: pulse 1s infinite; }
+  .speaker-btn.muted { background: rgba(123,47,255,0.15); border-color: rgba(123,47,255,0.4); }
+
+  .send-btn { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #000; font-weight: 700; }
+  .send-btn:hover { opacity: 0.85; transform: scale(1.05); }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .input-footer {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 8px;
+    font-family: 'Share Tech Mono'; font-size: 10px; color: var(--dim);
+  }
+  .mode-indicator {
+    padding: 3px 10px; border-radius: 12px;
+    border: 1px solid var(--border); background: rgba(0,229,255,0.05);
+    color: var(--accent); font-size: 10px;
+  }
+  .sidebar::-webkit-scrollbar { width: 3px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); }
+
+  /* History items */
+  .hist-item {
+    font-family: 'Share Tech Mono'; font-size: 10px; color: var(--dim);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    cursor: pointer; padding: 3px 0; line-height: 1.8;
+  }
+  .hist-item:hover { color: var(--accent); }
+
+  /* Clear button */
+  .clear-btn {
+    margin-top: 10px;
+    width: 100%; padding: 7px;
+    border-radius: 6px; border: 1px solid var(--border);
+    background: transparent; color: var(--dim);
+    font-family: 'Share Tech Mono'; font-size: 10px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .clear-btn:hover { border-color: var(--red); color: var(--red); }
+
+  /* ─── NEW: User Profile & Settings ─── */
+  .profile-btn {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: rgba(0,229,255,0.1); border: 1px solid var(--border);
+    color: var(--text); cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .profile-btn:hover { background: rgba(0,229,255,0.2); border-color: var(--accent); }
+
+  .profile-panel {
+    position: fixed; top: 65px; right: 0; width: 320px; height: calc(100vh - 65px);
+    background: rgba(13,17,23,0.98); border-left: 1px solid var(--border);
+    padding: 20px; overflow-y: auto; display: none; z-index: 100;
+    box-shadow: -8px 0 24px rgba(0,0,0,0.4);
+  }
+  .profile-panel.open { display: flex; flex-direction: column; }
+  .profile-close { position: absolute; top: 10px; right: 10px; cursor: pointer; font-size: 20px; }
+  .profile-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; color: var(--accent); }
+  .profile-item { margin-bottom: 14px; }
+  .profile-label { font-family: 'Share Tech Mono'; font-size: 10px; color: var(--dim); text-transform: uppercase; margin-bottom: 4px; }
+  .profile-input { width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--panel); color: var(--text); font-size: 12px; }
+  .profile-stat { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: rgba(0,229,255,0.05); border-radius: 6px; margin-bottom: 6px; font-size: 11px; }
+  .profile-stat-label { color: var(--dim); }
+  .profile-stat-value { color: var(--accent); font-weight: 700; }
+
+  /* ─── NEW: Sentiment & Feedback ─── */
+  .msg-meta { display: flex; gap: 12px; margin-top: 8px; flex-wrap: wrap; }
+  .sentiment-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 10px; border-radius: 12px; font-size: 10px;
+    font-family: 'Share Tech Mono'; border: 1px solid var(--border);
+  }
+  .sentiment-positive { background: rgba(0,255,136,0.1); border-color: rgba(0,255,136,0.4); color: var(--green); }
+  .sentiment-neutral { background: rgba(0,229,255,0.1); border-color: rgba(0,229,255,0.4); color: var(--accent); }
+  .sentiment-negative { background: rgba(255,60,90,0.1); border-color: rgba(255,60,90,0.4); color: var(--red); }
+  .sentiment-empathetic { background: rgba(123,47,255,0.1); border-color: rgba(123,47,255,0.4); color: #b88ff8; }
+
+  .intent-tag { display: inline-block; padding: 3px 8px; border-radius: 10px; background: rgba(123,47,255,0.15); border: 1px solid rgba(123,47,255,0.4); color: #b88ff8; font-size: 9px; font-family: 'Share Tech Mono'; margin-right: 4px; }
+
+  .feedback-group {
+    display: flex; gap: 6px; align-items: center;
+    margin-top: 6px;
+  }
+  .feedback-btn {
+    width: 24px; height: 24px; border-radius: 4px;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--dim); cursor: pointer; font-size: 12px;
+    transition: all 0.2s; display: flex; align-items: center; justify-content: center;
+  }
+  .feedback-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .feedback-btn.active { background: rgba(0,229,255,0.2); border-color: var(--accent); color: var(--accent); }
+
+  .entity-highlight {
+    background: linear-gradient(120deg, rgba(0,229,255,0.2), rgba(123,47,255,0.2));
+    border-radius: 3px; padding: 1px 3px;
+    border-bottom: 1px dashed var(--accent);
+  }
+
+  .context-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 12px; background: rgba(0,229,255,0.05);
+    border-radius: 6px; margin-bottom: 12px;
+    font-family: 'Share Tech Mono'; font-size: 9px; color: var(--dim);
+  }
+  .context-item { display: inline-flex; align-items: center; gap: 4px; }
+  .context-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+
+  /* ─── Language & Storage ─── */
+  .lang-selector {
+    position: absolute; top: 12px; left: 320px;
+    display: flex; align-items: center; gap: 6px;
+    z-index: 15;
+  }
+  .lang-btn {
+    padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border);
+    background: rgba(0,229,255,0.05); color: var(--text); font-size: 10px;
+    cursor: pointer; transition: all 0.2s; font-family: 'Share Tech Mono';
+  }
+  .lang-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .lang-btn.active { background: rgba(0,229,255,0.2); border-color: var(--accent); color: var(--accent); }
+
+  .storage-badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 8px; border-radius: 6px; background: rgba(0,255,136,0.1);
+    border: 1px solid rgba(0,255,136,0.3); color: var(--green);
+    font-family: 'Share Tech Mono'; font-size: 9px;
+  }
+
+  .conversation-history-modal {
+    position: fixed; top: 65px; left: 220px; width: 400px; max-height: 600px;
+    background: rgba(13,17,23,0.98); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px; overflow-y: auto;
+    display: none; z-index: 100; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .conversation-history-modal.open { display: flex; flex-direction: column; }
+  .conv-item {
+    padding: 10px; margin-bottom: 8px; border-radius: 6px;
+    background: rgba(0,229,255,0.08); border: 1px solid var(--border);
+    cursor: pointer; font-size: 11px; transition: all 0.2s;
+  }
+  .conv-item:hover { background: rgba(0,229,255,0.15); border-color: var(--accent); }
+  .conv-item.active { background: rgba(0,229,255,0.2); border-color: var(--accent); }
+  .conv-time { font-family: 'Share Tech Mono'; color: var(--dim); font-size: 9px; }
+  .conv-preview { color: var(--text); margin-top: 4px; }
+
+  .storage-controls {
+    display: flex; gap: 6px; margin-bottom: 12px;
+  }
+  .storage-btn {
+    flex: 1; padding: 6px; border-radius: 6px; border: 1px solid var(--border);
+    background: rgba(123,47,255,0.1); color: #b88ff8; font-size: 10px;
+    cursor: pointer; font-family: 'Share Tech Mono'; transition: all 0.2s;
+  }
+  .storage-btn:hover { background: rgba(123,47,255,0.2); border-color: #b88ff8; }
+
+  /* ─── Feature Development System ─── */
+  .feature-request-modal {
+    position: fixed; top: 65px; right: 0; width: 500px; max-height: 80vh;
+    background: rgba(13,17,23,0.99); border-left: 1px solid var(--border);
+    padding: 20px; overflow-y: auto; display: none; z-index: 100;
+    box-shadow: -12px 0 32px rgba(0,0,0,0.5);
+  }
+  .feature-request-modal.open { display: flex; flex-direction: column; }
+  .feature-close { position: absolute; top: 10px; right: 10px; cursor: pointer; font-size: 20px; color: var(--red); }
+
+  .feature-title { font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 12px; }
+  .feature-input { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border); background: var(--panel); color: var(--text); font-size: 12px; font-family: 'Exo 2'; min-height: 60px; resize: vertical; }
+
+  .feature-code-display {
+    background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px; margin: 12px 0; max-height: 400px; overflow-y: auto;
+    font-family: 'Share Tech Mono'; font-size: 11px; color: var(--accent);
+    line-height: 1.5;
+  }
+
+  .feature-buttons { display: flex; gap: 8px; margin-bottom: 12px; }
+  .feature-btn {
+    flex: 1; padding: 8px; border-radius: 6px; border: 1px solid var(--border);
+    background: rgba(0,229,255,0.1); color: var(--accent); font-size: 11px;
+    cursor: pointer; font-family: 'Share Tech Mono'; transition: all 0.2s;
+  }
+  .feature-btn:hover { background: rgba(0,229,255,0.2); border-color: var(--accent); }
+  .feature-btn.success { background: rgba(0,255,136,0.1); border-color: var(--green); color: var(--green); }
+  .feature-btn.danger { background: rgba(255,60,90,0.1); border-color: var(--red); color: var(--red); }
+
+  .feature-status {
+    padding: 10px; border-radius: 6px; border-left: 3px solid var(--accent);
+    background: rgba(0,229,255,0.08); color: var(--text); font-size: 11px;
+    margin-bottom: 12px;
+  }
+
+  .feature-registry {
+    background: rgba(0,229,255,0.05); border: 1px solid var(--border); border-radius: 6px;
+    padding: 12px; margin-top: 12px;
+  }
+
+  .feature-item {
+    padding: 8px; background: rgba(0,229,255,0.08); border-radius: 4px;
+    margin-bottom: 6px; font-size: 10px; border-left: 2px solid var(--green);
+  }
+
+  .dev-btn {
+    width: 40px; height: 40px; border-radius: 10px;
+    border: 1px solid rgba(123,47,255,0.4); background: rgba(123,47,255,0.15);
+    color: #b88ff8; cursor: pointer; font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s; flex-shrink: 0;
+  }
+  .dev-btn:hover { background: rgba(123,47,255,0.3); }
+
+  /* ─── Feature Builder & Search ─── */
+  .feature-builder-modal {
+    position: fixed; top: 65px; left: 220px; width: 450px; max-height: 700px;
+    background: rgba(13,17,23,0.98); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px; overflow-y: auto;
+    display: none; z-index: 100; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .feature-builder-modal.open { display: flex; flex-direction: column; }
+  
+  .feature-request-input {
+    width: 100%; padding: 10px; border-radius: 6px;
+    border: 1px solid var(--border); background: var(--panel);
+    color: var(--text); font-family: 'Exo 2'; font-size: 12px;
+    margin-bottom: 10px; resize: vertical; min-height: 60px;
+  }
+  
+  .dev-button {
+    width: 100%; padding: 8px; border-radius: 6px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #000; border: none; cursor: pointer; font-weight: 700;
+    font-family: 'Exo 2'; margin-bottom: 8px; transition: all 0.2s;
+  }
+  .dev-button:hover { opacity: 0.85; transform: scale(1.02); }
+  .dev-button:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .search-result {
+    padding: 12px; margin-bottom: 10px; border-radius: 6px;
+    background: rgba(0,229,255,0.08); border: 1px solid var(--border);
+    font-size: 11px; line-height: 1.6;
+  }
+  .search-result-title {
+    color: var(--accent); font-weight: 700; margin-bottom: 4px;
+  }
+  .search-result-snippet { color: var(--text); }
+  .search-result-url { color: var(--dim); font-size: 9px; font-family: 'Share Tech Mono'; }
+
+  .feature-status {
+    padding: 8px 12px; border-radius: 6px; font-size: 10px;
+    font-family: 'Share Tech Mono'; margin-bottom: 8px;
+  }
+  .status-building { background: rgba(0,229,255,0.1); color: var(--accent); }
+  .status-complete { background: rgba(0,255,136,0.1); color: var(--green); }
+  .status-error { background: rgba(255,60,90,0.1); color: var(--red); }
+
+  .knowledge-item {
+    padding: 8px; margin-bottom: 6px; border-radius: 4px;
+    background: rgba(123,47,255,0.1); border-left: 2px solid #b88ff8;
+    font-size: 10px; color: var(--text);
+  }
+  .knowledge-label { color: #b88ff8; font-family: 'Share Tech Mono'; font-weight: 700; }
+
+  /* ─── Feature Development & Learning ─── */
+  .dev-btn {
+    position: fixed; bottom: 80px; right: 20px; z-index: 50;
+    width: 50px; height: 50px; border-radius: 50%;
+    background: linear-gradient(135deg, #00ff88, #00e5ff);
+    border: none; cursor: pointer; font-size: 24px;
+    box-shadow: 0 4px 15px rgba(0,229,255,0.4);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.3s;
+  }
+  .dev-btn:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(0,229,255,0.6); }
+  
+  .dev-modal {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8); display: none; z-index: 200;
+    align-items: center; justify-content: center;
+  }
+  .dev-modal.open { display: flex; }
+  .dev-content {
+    background: rgba(13,17,23,0.98); border: 2px solid var(--accent);
+    border-radius: 12px; padding: 24px; width: 90%; max-width: 700px;
+    max-height: 80vh; overflow-y: auto; box-shadow: 0 0 50px rgba(0,229,255,0.3);
+  }
+  .dev-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border);
+  }
+  .dev-title { font-size: 18px; font-weight: 700; color: var(--accent); }
+  .dev-close { cursor: pointer; font-size: 24px; color: var(--dim); }
+  .dev-close:hover { color: var(--accent); }
+  
+  .dev-section { margin-bottom: 18px; }
+  .dev-label { font-family: 'Share Tech Mono'; font-size: 11px; color: var(--dim); margin-bottom: 6px; }
+  .dev-input, .dev-textarea {
+    width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--border);
+    background: var(--panel); color: var(--text); font-family: 'Exo 2'; font-size: 12px;
+  }
+  .dev-textarea { resize: vertical; min-height: 100px; }
+  
+  .dev-buttons {
+    display: flex; gap: 8px; margin-top: 16px;
+  }
+  .dev-btn-submit, .dev-btn-cancel {
+    flex: 1; padding: 10px; border-radius: 6px; border: none;
+    cursor: pointer; font-family: 'Share Tech Mono'; font-size: 11px;
+    transition: all 0.2s;
+  }
+  .dev-btn-submit {
+    background: linear-gradient(135deg, #00ff88, #00e5ff);
+    color: #000; font-weight: 700;
+  }
+  .dev-btn-submit:hover { opacity: 0.85; }
+  .dev-btn-cancel {
+    background: rgba(255,60,90,0.15); color: var(--red); border: 1px solid var(--red);
+  }
+  .dev-btn-cancel:hover { background: rgba(255,60,90,0.25); }
+  .ftype-group { display:flex; flex-wrap:wrap; gap:6px; margin-top:4px; }
+  .ftype-btn {
+    padding:6px 14px; border-radius:20px; border:1px solid var(--border);
+    background:var(--panel); color:var(--dim); cursor:pointer;
+    font-family:'Share Tech Mono'; font-size:10px; transition:all 0.2s;
+  }
+  .ftype-btn.active { border-color:var(--accent); color:var(--accent); background:rgba(0,229,255,0.12); }
+  .ftype-btn:hover  { border-color:var(--accent); color:var(--text); }
+  
+  .feature-card {
+    background: rgba(0,229,255,0.08); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px; margin-bottom: 10px;
+  }
+  .feature-status {
+    display: inline-block; padding: 3px 8px; border-radius: 4px;
+    font-family: 'Share Tech Mono'; font-size: 9px;
+    background: rgba(0,255,136,0.2); color: var(--green);
+  }
+  .feature-status.pending { background: rgba(123,47,255,0.2); color: #b88ff8; }
+  .feature-status.implemented { background: rgba(0,255,136,0.2); color: var(--green); }
+  
+  .learning-insights {
+    background: rgba(123,47,255,0.1); border: 1px solid rgba(123,47,255,0.4);
+    border-radius: 8px; padding: 12px; margin-top: 12px;
+  }
+  .learning-item {
+    font-size: 11px; color: var(--text); margin-bottom: 6px;
+    padding-bottom: 6px; border-bottom: 1px solid rgba(123,47,255,0.2);
+  }
+  .learning-item:last-child { border: none; margin-bottom: 0; }
+  .learning-icon { margin-right: 6px; }
+
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">⬡</div>
+    <div>
+      <div class="logo-text">JARVIS</div>
+      <div class="logo-sub">INTELLIGENT ASSISTANT</div>
+    </div>
+  </div>
+  <div class="status-bar">
+    <div class="status-dot" id="statusDot"></div>
+    <span class="status-label" id="statusLabel">SYSTEM ONLINE</span>
+    <button class="profile-btn" id="profileBtn" onclick="toggleProfile()" title="User Profile & Settings">👤</button>
+  </div>
+</header>
+
+<!-- ─── Language Selector ─── -->
+<div class="lang-selector">
+  <span style="font-family:'Share Tech Mono'; font-size:9px; color:var(--dim);">LANGUAGE:</span>
+  <button class="lang-btn active" onclick="setLanguage('en')">English</button>
+  <button class="lang-btn" onclick="setLanguage('ta')">Tamil</button>
+  <button class="lang-btn" onclick="setLanguage('hi')">Hindi</button>
+</div>
+
+<!-- ─── Conversation History Modal ─── -->
+<div class="conversation-history-modal" id="convHistory">
+  <h3 style="color:var(--accent); margin-bottom:12px;">📚 CONVERSATION HISTORY</h3>
+  <div class="storage-controls">
+    <button class="storage-btn" onclick="exportAllConversations()">📥 EXPORT</button>
+    <button class="storage-btn" onclick="clearAllConversations()">🗑️ CLEAR</button>
+    <button class="storage-btn" onclick="toggleConversationHistory()" style="background:rgba(255,60,90,0.1); color:var(--red);">✕ CLOSE</button>
+  </div>
+  <div id="convList" style="overflow-y:auto;"></div>
+</div>
+
+<!-- ─── Feature Development Modal ─── -->
+<div class="dev-modal" id="devModal">
+  <div class="dev-content">
+    <div class="dev-header">
+      <div class="dev-title">🚀 FEATURE DEVELOPMENT & LEARNING</div>
+      <span class="dev-close" onclick="toggleDevModal()">✕</span>
+    </div>
+    
+    <div class="dev-section">
+      <div class="dev-label">📋 Feature Request</div>
+      <textarea class="dev-textarea" id="featureDesc" placeholder="Describe the feature you want JARVIS to develop...
+Example: Add a notes feature, Create a code formatter, Add dark mode toggle, etc."></textarea>
+    </div>
+    
+    <div class="dev-section">
+      <div class="dev-label">🎯 Feature Type — pick one:</div>
+      <div class="ftype-group">
+        <button class="ftype-btn active" data-value="ui"     onclick="selectFeatureType(this)">🖥️ UI</button>
+        <button class="ftype-btn"        data-value="api"    onclick="selectFeatureType(this)">⚙️ API</button>
+        <button class="ftype-btn"        data-value="analysis" onclick="selectFeatureType(this)">📊 Analysis</button>
+        <button class="ftype-btn"        data-value="integration" onclick="selectFeatureType(this)">🔗 Integration</button>
+        <button class="ftype-btn"        data-value="other"  onclick="selectFeatureType(this)">💡 Other</button>
+      </div>
+      <input type="hidden" id="featureType" value="ui">
+    </div>
+    
+    <div class="dev-buttons">
+      <button class="dev-btn-submit" onclick="submitFeatureRequest()">⚡ GENERATE & IMPLEMENT</button>
+      <button class="dev-btn-cancel" onclick="toggleDevModal()">CANCEL</button>
+    </div>
+    
+    <div id="devResponse" style="display:none; margin-top:16px;"></div>
+    <div id="featuresList" style="margin-top:16px;"></div>
+  </div>
+</div>
+
+<!-- ─── Development Button ─── -->
+<button class="dev-btn" id="devButton" onclick="toggleDevModal()" title="Request New Feature">🚀</button>
+
+<div class="main-layout">
+  <!-- ─── User Profile Panel ─── -->
+  <div class="profile-panel" id="profilePanel">
+    <span class="profile-close" onclick="toggleProfile()">✕</span>
+    <div class="profile-title">👤 USER PROFILE</div>
+    
+    <div class="profile-item">
+      <div class="profile-label">User Name</div>
+      <input type="text" class="profile-input" id="userName" placeholder="Enter your name" onchange="saveProfile()">
+    </div>
+    
+    <div class="profile-item">
+      <div class="profile-label">Preferred Domain</div>
+      <select class="profile-input" id="userDomain" onchange="saveProfile()">
+        <option value="">General</option>
+        <option value="java">Java Development</option>
+        <option value="javascript">JavaScript</option>
+        <option value="newgen">Newgen iBPS</option>
+        <option value="sql">Database/SQL</option>
+        <option value="devops">DevOps</option>
+      </select>
+    </div>
+
+    <div class="profile-item">
+      <div class="profile-label">Learning Preferences</div>
+      <label style="display:flex; align-items:center; gap:6px; margin-bottom:6px; cursor:pointer; font-size:12px;">
+        <input type="checkbox" id="prefCode" onchange="saveProfile()"> Show code examples
+      </label>
+      <label style="display:flex; align-items:center; gap:6px; margin-bottom:6px; cursor:pointer; font-size:12px;">
+        <input type="checkbox" id="prefExplain" onchange="saveProfile()"> Detailed explanations
+      </label>
+      <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:12px;">
+        <input type="checkbox" id="prefQuick" onchange="saveProfile()"> Quick answers
+      </label>
+    </div>
+
+    <div style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border);">
+      <div class="profile-title">📊 LEARNING PROFILE</div>
+      <div class="profile-stat">
+        <span class="profile-stat-label">Messages</span>
+        <span class="profile-stat-value" id="statMessages">0</span>
+      </div>
+      <div class="profile-stat">
+        <span class="profile-stat-label">Avg Sentiment</span>
+        <span class="profile-stat-value" id="statSentiment">😊</span>
+      </div>
+      <div class="profile-stat">
+        <span class="profile-stat-label">Topics</span>
+        <span class="profile-stat-value" id="statTopics">0</span>
+      </div>
+      <div class="profile-stat">
+        <span class="profile-stat-label">Feedback Score</span>
+        <span class="profile-stat-value" id="statFeedback">8.5/10</span>
+      </div>
+      <button style="width:100%; margin-top:12px; padding:8px; border-radius:6px; border:1px solid var(--border); background:rgba(123,47,255,0.15); color:#b88ff8; cursor:pointer; font-size:11px; font-family:'Share Tech Mono';" onclick="exportProfile()">EXPORT PROFILE</button>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="sidebar-title">// COMMAND MODE</div>
+
+    <button class="mode-btn active" onclick="setMode(this,'general')">
+      <span class="mode-icon">🧠</span>
+      <div><div>General AI</div><div class="mode-sub">CHAT · ANALYZE</div></div>
+    </button>
+    <button class="mode-btn" onclick="setMode(this,'code')">
+      <span class="mode-icon">💻</span>
+      <div><div>Code Writer</div><div class="mode-sub">JAVA · JS · SQL</div></div>
+    </button>
+    <button class="mode-btn" onclick="setMode(this,'ibps')">
+      <span class="mode-icon">⚙️</span>
+      <div><div>Newgen iBPS</div><div class="mode-sub">BPM · IFORMS</div></div>
+    </button>
+    <button class="mode-btn" onclick="setMode(this,'debug')">
+      <span class="mode-icon">🔍</span>
+      <div><div>Debug Mode</div><div class="mode-sub">ANALYZE · FIX</div></div>
+    </button>
+    <button class="mode-btn" onclick="setMode(this,'sql')">
+      <span class="mode-icon">🗄️</span>
+      <div><div>SQL / DBX</div><div class="mode-sub">QUERY · OPTIMIZE</div></div>
+    </button>
+
+    <div style="margin-top: auto; padding-top: 20px;">
+      <div class="sidebar-title">// HISTORY</div>
+      <div id="historyList"><span style="font-family:'Share Tech Mono';font-size:10px;color:var(--dim)">No history yet.</span></div>
+      <button class="clear-btn" onclick="clearChat()">⟳ CLEAR CHAT</button>
+      <button class="clear-btn" onclick="toggleConversationHistory()" style="margin-top:8px; border-color:var(--accent); color:var(--accent);">📚 SAVED CHATS</button>
+      <button class="clear-btn" onclick="toggleDevModal()" style="margin-top:8px; border-color:#b88ff8; color:#b88ff8;">🚀 DEVELOP FEATURE</button>
+    </div>
+  </div>
+
+  <div class="chat-area">
+    <div class="messages" id="messages">
+      <div class="welcome" id="welcomeScreen">
+        <div class="welcome-icon">⬡</div>
+        <h2>JARVIS READY</h2>
+        <p>Your Intelligent Assistant is online and running locally. Speak or type any command — I'll write code, debug, analyze, or answer anything.</p>
+        <div class="chips">
+          <div class="chip" onclick="sendChip(this)">Write a Java method</div>
+          <div class="chip" onclick="sendChip(this)">Create a SQL query</div>
+          <div class="chip" onclick="sendChip(this)">Write an iForms JS validation</div>
+          <div class="chip" onclick="sendChip(this)">Explain BPM workflows</div>
+          <div class="chip" onclick="sendChip(this)">Debug this code</div>
+          <div class="chip" onclick="sendChip(this)">Write a REST API call in Java</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-area">
+      <div class="input-wrapper">
+        <textarea id="userInput" placeholder="Type a command or speak... (Shift+Enter for new line)" rows="1"
+          onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+        <div class="btn-group">
+          <button class="speaker-btn" id="speakerBtn" onclick="toggleSpeaker()" title="Toggle Speaker (AI will speak responses)">🔊</button>
+          <button class="mic-btn" id="micBtn" onclick="toggleMic()" title="Voice Command">🎤</button>
+          <button class="send-btn" id="sendBtn" onclick="sendMessage()">➤</button>
+        </div>
+      </div>
+      <div class="input-footer">
+        <span>Enter to send · Shift+Enter for new line</span>
+        <span class="mode-indicator" id="modeIndicator">⬡ GENERAL AI</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentMode = 'general';
+let isLoading = false;
+let isListening = false;
+let speakerEnabled = true;
+let isCurrentlySpeaking = false;
+let recognition = null;
+let conversationHistory = [];
+
+const SYSTEM_PROMPTS = {
+  general: `You are JARVIS, an advanced AI Command Interface. Respond to commands — answer questions, explain concepts, write code. Be precise and structured. Format code in markdown triple backticks with language tag.`,
+  code: `You are JARVIS Code Engine. Write high-quality, production-grade code. Analyze first, then write clean commented code, then explain briefly. Languages: Java, JavaScript, SQL, XML, JSON. Format code in triple backticks with language tags.`,
+  ibps: `You are JARVIS iBPS Specialist for Newgen BPM platform. Expert in: Newgen iBPS workflows, Java server-side coding, JavaScript for iForms UI (IFormReference: getValue, setValue, setVisible), DBX/SQL, SOAP/REST integration, NGUtil.writeConsoleLog. Follow Newgen coding standards. Never change business logic unless asked. Analyze first, then improve. Format code in triple backticks.`,
+  debug: `You are JARVIS Debug Engine. For any code or error: 1) Analyze what it does, 2) Identify bugs/null risks/performance issues, 3) Explain root cause, 4) Provide fixed code, 5) List best practice suggestions. Format code in triple backticks.`,
+  sql: `You are JARVIS SQL & DBX Optimizer. For any query: 1) Explain what it does, 2) Identify inefficiencies, 3) Provide optimized version, 4) Note security concerns. Format SQL in triple backticks with 'sql' tag. Support Oracle, MySQL, PostgreSQL, Newgen DBX syntax.`
+};
+
+const MODE_LABELS = {
+  general: '⬡ GENERAL AI', code: '💻 CODE WRITER',
+  ibps: '⚙️ NEWGEN iBPS', debug: '🔍 DEBUG MODE', sql: '🗄️ SQL / DBX'
+};
+
+// ── Speaker/TTS ──
+function toggleSpeaker() {
+  speakerEnabled = !speakerEnabled;
+  const btn = document.getElementById('speakerBtn');
+  if (speakerEnabled) {
+    btn.classList.remove('muted');
+    btn.textContent = '🔊';
+    setStatus('SPEAKER: ON');
+  } else {
+    btn.classList.add('muted');
+    btn.textContent = '🔇';
+    setStatus('SPEAKER: OFF');
+    stopSpeaking();
+  }
+  setTimeout(() => setStatus('SYSTEM ONLINE'), 2000);
+}
+
+function speak(text) {
+  if (!speakerEnabled || !window.speechSynthesis) return;
+  
+  // Stop any current speech
+  window.speechSynthesis.cancel();
+  
+  // Clean text for speech (remove markdown formatting)
+  const cleanText = text
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/\*(.*?)\*/g, '$1')
+    .replace(/```[\s\S]*?```/g, '[code block]')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/##+ /g, '')
+    .replace(/[-*+] /g, '')
+    .trim();
+  
+  if (!cleanText) return;
+  
+  // Language code mapping for Web Speech API
+  const languageMap = {
+    'en': 'en-US',
+    'ta': 'ta-IN',   // Tamil - India
+    'hi': 'hi-IN',   // Hindi - India
+    'es': 'es-ES',   // Spanish
+    'fr': 'fr-FR',   // French
+    'de': 'de-DE',   // German
+    'pt': 'pt-BR',   // Portuguese
+    'ja': 'ja-JP',   // Japanese
+    'ko': 'ko-KR'    // Korean
+  };
+  
+  const utterance = new SpeechSynthesisUtterance(cleanText);
+  
+  // Set language based on current language setting
+  utterance.lang = languageMap[currentLanguage] || 'en-US';
+  
+  // Get available voices and select one that matches the language
+  const voices = window.speechSynthesis.getVoices();
+  const voiceForLang = voices.find(v => v.lang.startsWith(currentLanguage)) || 
+                       voices.find(v => v.lang.startsWith(languageMap[currentLanguage].split('-')[0]));
+  
+  if (voiceForLang) {
+    utterance.voice = voiceForLang;
+  }
+  
+  utterance.rate = 0.9;
+  utterance.pitch = 1.0;
+  utterance.volume = 1.0;
+  
+  utterance.onstart = () => {
+    isCurrentlySpeaking = true;
+    const btn = document.getElementById('speakerBtn');
+    if (btn) {
+      btn.classList.add('active');
+      btn.title = `Speaking in ${currentLanguage.toUpperCase()}...`;
+    }
+  };
+  
+  utterance.onend = () => {
+    isCurrentlySpeaking = false;
+    const btn = document.getElementById('speakerBtn');
+    if (btn) {
+      btn.classList.remove('active');
+      btn.title = 'Toggle Speaker';
+    }
+  };
+  
+  utterance.onerror = (e) => {
+    console.error('Speech synthesis error:', e);
+    isCurrentlySpeaking = false;
+    const btn = document.getElementById('speakerBtn');
+    if (btn) btn.classList.remove('active');
+  };
+  
+  console.log(`🔊 Speaking in ${utterance.lang}...`);
+  window.speechSynthesis.speak(utterance);
+}
+
+function stopSpeaking() {
+  if (window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+    isCurrentlySpeaking = false;
+    const btn = document.getElementById('speakerBtn');
+    if (btn) btn.classList.remove('active');
+  }
+}
+
+// ── Voice ──
+function initSpeech() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return null;
+  const r = new SR();
+  r.continuous = false; 
+  r.interimResults = false;
+  
+  // Language mapping for Speech Recognition
+  const langMap = {
+    'en': 'en-US',
+    'ta': 'ta-IN',   // Tamil - India
+    'hi': 'hi-IN',   // Hindi - India
+    'es': 'es-ES',   // Spanish
+    'fr': 'fr-FR',   // French
+    'de': 'de-DE',   // German
+    'pt': 'pt-BR',   // Portuguese
+    'ja': 'ja-JP',   // Japanese
+    'ko': 'ko-KR'    // Korean
+  };
+  
+  // Set language based on currentLanguage
+  r.lang = langMap[currentLanguage] || 'en-US';
+  
+  r.onstart = () => {
+    console.log(`🎤 Listening in ${r.lang}...`);
+  };
+  
+  r.onresult = e => {
+    const transcript = e.results[0][0].transcript;
+    document.getElementById('userInput').value = transcript;
+    autoResize(document.getElementById('userInput'));
+    stopListening();
+    setTimeout(sendMessage, 300);
+  };
+  
+  r.onerror = (e) => {
+    console.error('Speech recognition error:', e.error);
+    stopListening();
+  };
+  
+  r.onend = stopListening;
+  return r;
+}
+
+function toggleMic() {
+  if (isListening) { stopListening(); return; }
+  if (!recognition) recognition = initSpeech();
+  if (!recognition) { alert('Voice not supported in this browser. Use Chrome.'); return; }
+  isListening = true;
+  document.getElementById('micBtn').classList.add('listening');
+  document.getElementById('micBtn').textContent = '🔴';
+  setStatus(`🎤 LISTENING (${currentLanguage.toUpperCase()})...`, true);
+  recognition.start();
+}
+function stopListening() {
+  isListening = false;
+  const btn = document.getElementById('micBtn');
+  btn.classList.remove('listening'); btn.textContent = '🎤';
+  setStatus('SYSTEM ONLINE');
+  try { if (recognition) recognition.stop(); } catch(e) {}
+}
+
+// ── UI ──
+function setMode(el, mode) {
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  currentMode = mode;
+  document.getElementById('modeIndicator').textContent = MODE_LABELS[mode];
+}
+function setStatus(txt, err = false) {
+  document.getElementById('statusLabel').textContent = txt;
+  const dot = document.getElementById('statusDot');
+  dot.style.background = err ? 'var(--red)' : 'var(--green)';
+  dot.style.boxShadow = err ? '0 0 8px var(--red)' : '0 0 8px var(--green)';
+}
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+}
+function handleKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+function sendChip(el) { document.getElementById('userInput').value = el.textContent; sendMessage(); }
+function scrollToBottom() { const m = document.getElementById('messages'); m.scrollTop = m.scrollHeight; }
+
+function clearChat() {
+  document.getElementById('messages').innerHTML = `<div class="welcome" id="welcomeScreen">
+    <div class="welcome-icon">⬡</div><h2>JARVIS READY</h2>
+    <p>Chat cleared. Ready for new commands.</p></div>`;
+  document.getElementById('historyList').innerHTML = '<span style="font-family:\'Share Tech Mono\';font-size:10px;color:var(--dim)">No history yet.</span>';
+  conversationHistory = [];
+}
+
+// ── Render ──
+function parseContent(text) {
+  let html = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>');
+  html = html.replace(/```(\w+)?\n?([\s\S]*?)```/g, (m, lang, code) => {
+    const id = 'c_' + Math.random().toString(36).substr(2,6);
+    return `<div class="code-header"><span>${lang||'CODE'}</span><button class="copy-btn" onclick="copyCode('${id}')">COPY</button></div><pre id="${id}">${code.trim()}</pre>`;
+  });
+  html = html.replace(/`([^`]+)`/g,'<code>$1</code>');
+  html = html.replace(/\n/g,'<br>');
+  return html;
+}
+
+function addMessage(role, text) {
+  const w = document.getElementById('welcomeScreen');
+  if (w) w.remove();
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  const isAI = role === 'ai';
+  div.innerHTML = `
+    <div class="avatar ${role}">${isAI ? '⬡' : '▶'}</div>
+    <div class="bubble ${role}">${isAI ? parseContent(text) : text.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`;
+  msgs.appendChild(div);
+  scrollToBottom();
+
+  // 🔊 Speak AI response
+  if (isAI) {
+    speak(text);
+  }
+
+  if (role === 'user') {
+    const hist = document.getElementById('historyList');
+    if (hist.querySelector('span')) hist.innerHTML = '';
+    const d = document.createElement('div');
+    d.className = 'hist-item';
+    d.textContent = `› ${text.substring(0,24)}...`;
+    d.title = text;
+    hist.appendChild(d);
+  }
+}
+
+function addTypingIndicator() {
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'msg ai'; div.id = 'typing_ind';
+  div.innerHTML = `<div class="avatar ai">⬡</div><div class="bubble ai"><div class="typing"><span></span><span></span><span></span></div></div>`;
+  msgs.appendChild(div);
+  scrollToBottom();
+}
+function removeTypingIndicator() { const e = document.getElementById('typing_ind'); if(e) e.remove(); }
+
+function copyCode(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  navigator.clipboard.writeText(el.textContent).then(() => {
+    const btn = document.querySelector(`[onclick="copyCode('${id}')"]`);
+    if (btn) { const o = btn.textContent; btn.textContent='COPIED!'; setTimeout(()=>btn.textContent=o,1500); }
+  });
+}
+
+// ── API Call — hits LOCAL server ──
+async function callJarvis(userMessage) {
+  conversationHistory.push({ role: 'user', content: userMessage });
+
+  // Calls your local Node.js server — NO CORS issue!
+  const response = await fetch('/api/chat', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      system: SYSTEM_PROMPTS[currentMode],
+      messages: conversationHistory,
+      userProfile: userProfile,  // Send profile to server for personalization
+      language: currentLanguage   // Send language preference
+    })
+  });
+
+  if (!response.ok) {
+    const err = await response.json();
+    throw new Error(err.error || `Server error ${response.status}`);
+  }
+
+  const data = await response.json();
+  const reply = data.content.map(b => b.text || '').join('');
+  conversationHistory.push({ role: 'assistant', content: reply });
+  return reply;
+}
+
+// ── Send ──
+async function sendMessage() {
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if (!text || isLoading) return;
+  isLoading = true;
+  document.getElementById('sendBtn').disabled = true;
+  input.value = ''; input.style.height = 'auto';
+
+  // Analyze user message
+  const userSentiment = analyzeSentiment(text);
+  const userIntent = detectIntent(text);
+  const entities = extractEntities(text);
+
+  // Track stats
+  userProfile.stats.messages++;
+  userProfile.stats.sentiment.push(userSentiment.type === 'positive' ? 1 : userSentiment.type === 'negative' ? -1 : 0);
+  userIntent.forEach(i => userProfile.stats.topics.push(i));
+
+  // Display user message with analysis
+  addMessage('user', text);
+  addTypingIndicator();
+  setStatus('🧠 ANALYZING & RESPONDING...');
+
+  try {
+    const reply = await callJarvis(text);
+    removeTypingIndicator();
+
+    // Analyze AI response
+    const aiSentiment = analyzeSentiment(reply);
+    const aiIntent = detectIntent(reply);
+    const replyEntities = extractEntities(reply);
+
+    // Display with full analysis
+    addEnhancedMessage('ai', reply, aiSentiment, aiIntent, replyEntities);
+
+    // Update learning profile & auto-save
+    saveProfile();
+    updateContextBar();
+    autoSaveConversation();
+    setStatus('✓ SYSTEM ONLINE');
+  } catch(err) {
+    removeTypingIndicator();
+    addMessage('ai', `⚠️ **Error**: ${err.message}\n\nMake sure your server is running: **node server.js**`);
+    setStatus('ERROR', true);
+  }
+
+  isLoading = false;
+  document.getElementById('sendBtn').disabled = false;
+  input.focus();
+}
+
+// ═════════════════════════════════════════════════════════
+// NEW FEATURES: User Profile, Sentiment, Feedback, Learning
+// ═════════════════════════════════════════════════════════
+
+// User Profile Management
+let userProfile = {
+  name: 'User',
+  domain: '',
+  preferences: { code: true, explain: true, quick: false },
+  stats: { messages: 0, sentiment: [], topics: [], feedback: [] }
+};
+
+function loadProfile() {
+  const saved = localStorage.getItem('jarvisUserProfile');
+  if (saved) userProfile = JSON.parse(saved);
+  updateProfileUI();
+}
+
+function saveProfile() {
+  userProfile.name = document.getElementById('userName').value || 'User';
+  userProfile.domain = document.getElementById('userDomain').value;
+  userProfile.preferences.code = document.getElementById('prefCode').checked;
+  userProfile.preferences.explain = document.getElementById('prefExplain').checked;
+  userProfile.preferences.quick = document.getElementById('prefQuick').checked;
+  localStorage.setItem('jarvisUserProfile', JSON.stringify(userProfile));
+  updateStatsDisplay();
+}
+
+function updateProfileUI() {
+  document.getElementById('userName').value = userProfile.name;
+  document.getElementById('userDomain').value = userProfile.domain;
+  document.getElementById('prefCode').checked = userProfile.preferences.code;
+  document.getElementById('prefExplain').checked = userProfile.preferences.explain;
+  document.getElementById('prefQuick').checked = userProfile.preferences.quick;
+  updateStatsDisplay();
+}
+
+function updateStatsDisplay() {
+  document.getElementById('statMessages').textContent = userProfile.stats.messages;
+  const avgSent = calculateAvgSentiment();
+  document.getElementById('statSentiment').textContent = avgSent.emoji;
+  document.getElementById('statTopics').textContent = new Set(userProfile.stats.topics).size;
+  const avgFeedback = (userProfile.stats.feedback.reduce((a,b)=>a+b,0) / userProfile.stats.feedback.length || 0).toFixed(1);
+  document.getElementById('statFeedback').textContent = avgFeedback + '/10';
+}
+
+function toggleProfile() {
+  document.getElementById('profilePanel').classList.toggle('open');
+}
+
+function exportProfile() {
+  const json = JSON.stringify(userProfile, null, 2);
+  const blob = new Blob([json], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'jarvis-profile.json';
+  a.click();
+  alert('Profile exported! 📥');
+}
+
+// ── Sentiment Analysis ──
+function analyzeSentiment(text) {
+  const positive = /(happy|great|excellent|awesome|good|love|thank|helpful|perfect|wonderful|amazing)/gi;
+  const negative = /(bad|hate|terrible|awful|horrible|disappointed|angry|sad|frustrated)/gi;
+  const empathetic = /(understand|feel|sorry|support|help|care|concern)/gi;
+
+  let score = 0;
+  if (positive.test(text)) score += 1;
+  if (negative.test(text)) score -= 1;
+  if (empathetic.test(text)) score += 0.5;
+
+  if (score > 0.5) return { type: 'positive', emoji: '😊', label: 'Positive' };
+  if (score < -0.5) return { type: 'negative', emoji: '😔', label: 'Negative' };
+  return { type: 'neutral', emoji: '😐', label: 'Neutral' };
+}
+
+function calculateAvgSentiment() {
+  if (userProfile.stats.sentiment.length === 0) return { emoji: '😐', label: 'New' };
+  const avg = userProfile.stats.sentiment.reduce((a,b)=>a+b,0) / userProfile.stats.sentiment.length;
+  return avg > 0.3 ? { emoji: '😊', label: 'Positive' } : avg < -0.3 ? { emoji: '😔', label: 'Negative' } : { emoji: '😐', label: 'Neutral' };
+}
+
+// ── Intent Detection ──
+function detectIntent(text) {
+  const intents = {
+    'code': ['write', 'create', 'generate', 'code', 'function', 'method', 'class', 'implement'],
+    'debug': ['debug', 'fix', 'error', 'bug', 'issue', 'problem', 'troubleshoot', 'wrong'],
+    'explain': ['explain', 'what is', 'how does', 'what are', 'define', 'describe'],
+    'optimize': ['optimize', 'improve', 'performance', 'faster', 'efficient'],
+    'help': ['help', 'how to', 'how can', 'assist', 'support']
+  };
+
+  let detected = [];
+  for (const [intent, keywords] of Object.entries(intents)) {
+    if (keywords.some(kw => text.toLowerCase().includes(kw))) {
+      detected.push(intent);
+    }
+  }
+  return detected.length > 0 ? detected : ['general'];
+}
+
+// ── Entity Recognition ──
+function extractEntities(text) {
+  const entities = [];
+  const patterns = {
+    'language': /\b(Java|JavaScript|Python|SQL|XML|JSON|C#|Go|Rust)\b/gi,
+    'framework': /\b(Spring|React|Vue|Angular|Express|Django|FastAPI)\b/gi,
+    'platform': /\b(Newgen|iBPS|AWS|Azure|GCP|Docker|Kubernetes)\b/gi,
+    'database': /\b(Oracle|MySQL|PostgreSQL|MongoDB|Redis|Cassandra)\b/gi
+  };
+
+  for (const [type, pattern] of Object.entries(patterns)) {
+    let match;
+    while ((match = pattern.exec(text)) !== null) {
+      entities.push({ text: match[0], type });
+    }
+  }
+  return entities;
+}
+
+// ── Enhanced Message Display ──
+function addEnhancedMessage(role, text, sentiment, intent, entities) {
+  const w = document.getElementById('welcomeScreen');
+  if (w) w.remove();
+
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  const isAI = role === 'ai';
+
+  let metaHTML = '';
+  if (isAI) {
+    metaHTML = `<div class="msg-meta">`;
+    if (sentiment) {
+      metaHTML += `<span class="sentiment-badge sentiment-${sentiment.type}">${sentiment.emoji} ${sentiment.label}</span>`;
+    }
+    if (intent && intent.length > 0) {
+      intent.forEach(i => metaHTML += `<span class="intent-tag">🎯 ${i.toUpperCase()}</span>`);
+    }
+    metaHTML += `<div class="feedback-group">
+      <button class="feedback-btn" onclick="rateFeedback(this, 1)" title="Helpful">👍</button>
+      <button class="feedback-btn" onclick="rateFeedback(this, 0)" title="Not Helpful">👎</button>
+      <button class="feedback-btn" onclick="rateFeedback(this, 0.5)" title="Partial">⚬</button>
+    </div></div>`;
+  }
+
+  let contentHTML = parseContent(text);
+  if (entities && entities.length > 0) {
+    entities.forEach(e => {
+      const regex = new RegExp(`\\b${e.text}\\b`, 'gi');
+      contentHTML = contentHTML.replace(regex, `<span class="entity-highlight" title="${e.type}">${e.text}</span>`);
+    });
+  }
+
+  div.innerHTML = `
+    <div class="avatar ${role}">${isAI ? '⬡' : '▶'}</div>
+    <div class="bubble ${role}">
+      ${contentHTML}
+      ${metaHTML}
+    </div>`;
+
+  msgs.appendChild(div);
+  scrollToBottom();
+
+  if (isAI) speak(text);
+
+  if (role === 'user') {
+    const hist = document.getElementById('historyList');
+    if (hist.querySelector('span')) hist.innerHTML = '';
+    const d = document.createElement('div');
+    d.className = 'hist-item';
+    d.textContent = `› ${text.substring(0,24)}...`;
+    d.title = text;
+    hist.appendChild(d);
+  }
+}
+
+function rateFeedback(btn, score) {
+  btn.classList.toggle('active');
+  userProfile.stats.feedback.push(score * 10);
+  saveProfile();
+  const msg = score === 1 ? '✓ Thanks!' : score === 0 ? '✗ Noted' : '⚬ Noted';
+  const orig = btn.textContent;
+  btn.textContent = msg;
+  setTimeout(() => btn.textContent = orig, 1500);
+}
+
+// ── Context Display ──
+function updateContextBar() {
+  if (conversationHistory.length === 0) return;
+  const contextDiv = document.querySelector('.context-bar') || createContextBar();
+  const topics = userProfile.stats.topics.slice(-3);
+  const topicHTML = topics.map(t => `<div class="context-item"><div class="context-dot"></div><span>${t}</span></div>`).join('');
+  contextDiv.innerHTML = `<span>Context:</span> ${topicHTML || '<span style="color:var(--dim)">No topics</span>'}`;
+}
+
+function createContextBar() {
+  const msgs = document.getElementById('messages');
+  const bar = document.createElement('div');
+  bar.className = 'context-bar';
+  msgs.insertBefore(bar, msgs.firstChild);
+  return bar;
+}
+
+// ── Initialize on Load ──
+window.addEventListener('load', () => {
+  loadProfile();
+  updateContextBar();
+  loadConversationHistory();
+  loadLanguage();
+  loadFeatureData();
+});
+
+// ═════════════════════════════════════════════════════════
+// MULTI-LANGUAGE SUPPORT & CONVERSATION STORAGE
+// ═════════════════════════════════════════════════════════
+
+let currentLanguage = 'en';
+const translations = {
+  en: {
+    noHistory: 'No history yet.',
+    clearChat: '⟳ CLEAR CHAT',
+    savedChats: '📚 SAVED CHATS',
+    conversationHistory: '📚 CONVERSATION HISTORY',
+    export: '📥 EXPORT',
+    clear: '🗑️ CLEAR',
+    close: '✕ CLOSE',
+    newConversation: 'New Conversation',
+    language: 'LANGUAGE:',
+    jarvisReady: 'JARVIS READY',
+    intelligentAssistant: 'Your Intelligent Assistant is online'
+  },
+  ta: {
+    noHistory: 'வரலாறு இல்லை.',
+    clearChat: '⟳ சாட் அழி',
+    savedChats: '📚 சேமிக்கப்பட்ட சாட்கள்',
+    conversationHistory: '📚 உரையாடல் வரலாறு',
+    export: '📥 ஏற்றுமதி',
+    clear: '🗑️ அழி',
+    close: '✕ மூடு',
+    newConversation: 'புதிய உரையாடல்',
+    language: 'மொழி:',
+    jarvisReady: 'JARVIS தயாரம்',
+    intelligentAssistant: 'உங்கள் அறிவார்ந்த உதவியாளர் ஆன்லைனில் உள்ளது'
+  },
+  hi: {
+    noHistory: 'कोई इतिहास नहीं।',
+    clearChat: '⟳ चैट साफ करें',
+    savedChats: '📚 सहेजी गई चैट',
+    conversationHistory: '📚 बातचीत का इतिहास',
+    export: '📥 निर्यात करें',
+    clear: '🗑️ साफ करें',
+    close: '✕ बंद करें',
+    newConversation: 'नई बातचीत',
+    language: 'भाषा:',
+    jarvisReady: 'JARVIS तैयार',
+    intelligentAssistant: 'आपका बुद्धिमान सहायक ऑनलाइन है'
+  }
+};
+
+function setLanguage(lang) {
+  currentLanguage = lang;
+  localStorage.setItem('jarvisLanguage', lang);
+  document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  // Reinitialize speech recognition with new language
+  recognition = null;
+  
+  const langNames = { 'en': 'English', 'ta': 'Tamil', 'hi': 'Hindi' };
+  setStatus(`✓ Language: ${langNames[lang]}`);
+  setTimeout(() => setStatus('SYSTEM ONLINE'), 2000);
+  
+  updateUILanguage();
+}
+
+function loadLanguage() {
+  const saved = localStorage.getItem('jarvisLanguage');
+  if (saved) {
+    currentLanguage = saved;
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      if (btn.textContent.includes(saved.toUpperCase()) || btn.onclick.includes(saved)) {
+        btn.classList.add('active');
+      }
+    });
+  }
+}
+
+function updateUILanguage() {
+  // Update UI text based on selected language
+  const t = translations[currentLanguage];
+  if (document.getElementById('historyList')) {
+    const histSpan = document.querySelector('#historyList span');
+    if (histSpan) histSpan.textContent = t.noHistory;
+  }
+}
+
+function translate(key) {
+  return translations[currentLanguage]?.[key] || translations['en'][key];
+}
+
+// ── Conversation Storage ──
+let allConversations = [];
+
+function saveConversation(title = null) {
+  if (conversationHistory.length === 0) {
+    alert('No conversation to save!');
+    return;
+  }
+
+  const convTitle = title || `Chat ${new Date().toLocaleString()}`;
+  const conversation = {
+    id: Date.now(),
+    title: convTitle,
+    timestamp: new Date().toLocaleString(),
+    language: currentLanguage,
+    messages: conversationHistory,
+    profile: userProfile
+  };
+
+  allConversations.push(conversation);
+  localStorage.setItem('jarvisConversations', JSON.stringify(allConversations));
+  console.log('✓ Conversation saved:', convTitle);
+  updateConversationList();
+}
+
+function loadConversationHistory() {
+  const saved = localStorage.getItem('jarvisConversations');
+  if (saved) {
+    allConversations = JSON.parse(saved);
+    updateConversationList();
+  }
+}
+
+function updateConversationList() {
+  const convList = document.getElementById('convList');
+  if (!convList) return;
+
+  if (allConversations.length === 0) {
+    convList.innerHTML = '<span style="color:var(--dim);font-size:11px;">No saved conversations yet.</span>';
+    return;
+  }
+
+  convList.innerHTML = allConversations
+    .map((conv, idx) => `
+      <div class="conv-item" onclick="loadConversation(${idx})">
+        <div class="conv-time">🕐 ${conv.timestamp}</div>
+        <div class="conv-preview"><strong>${conv.title}</strong></div>
+        <div class="conv-time">${conv.messages.length} messages</div>
+        <div class="conv-time">🗣️ ${conv.language.toUpperCase()}</div>
+      </div>
+    `)
+    .join('');
+}
+
+function loadConversation(idx) {
+  const conv = allConversations[idx];
+  conversationHistory = conv.messages;
+  currentLanguage = conv.language;
+  
+  // Update UI
+  document.getElementById('messages').innerHTML = '';
+  document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+  
+  conversationHistory.forEach((msg, i) => {
+    if (msg.role === 'user') {
+      addMessage('user', msg.content);
+    } else {
+      const sentiment = analyzeSentiment(msg.content);
+      const intent = detectIntent(msg.content);
+      const entities = extractEntities(msg.content);
+      addEnhancedMessage('ai', msg.content, sentiment, intent, entities);
+    }
+  });
+
+  toggleConversationHistory();
+  console.log('✓ Conversation loaded:', conv.title);
+}
+
+function exportAllConversations() {
+  const json = JSON.stringify(allConversations, null, 2);
+  const blob = new Blob([json], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `jarvis-conversations-${Date.now()}.json`;
+  a.click();
+  alert('✓ All conversations exported!');
+}
+
+function clearAllConversations() {
+  if (confirm('⚠️ Delete ALL saved conversations? This cannot be undone!')) {
+    allConversations = [];
+    localStorage.setItem('jarvisConversations', JSON.stringify(allConversations));
+    updateConversationList();
+    alert('✓ All conversations cleared!');
+  }
+}
+
+function toggleConversationHistory() {
+  document.getElementById('convHistory').classList.toggle('open');
+  updateConversationList();
+}
+
+// ── Auto-save conversations ──
+function autoSaveConversation() {
+  if (conversationHistory.length > 0) {
+    saveConversation(`Auto-saved ${new Date().toLocaleTimeString()}`);
+  }
+}
+
+// Auto-save every 5 minutes
+setInterval(autoSaveConversation, 300000);
+
+// Save before leaving page
+window.addEventListener('beforeunload', () => {
+  if (conversationHistory.length > 0) {
+    saveConversation(`Auto-saved before close ${new Date().toLocaleTimeString()}`);
+  }
+});
+
+// ═════════════════════════════════════════════════════════
+// FEATURE DEVELOPMENT & LEARNING SYSTEM
+// ═════════════════════════════════════════════════════════
+
+let featureRequests = [];
+let implementedFeatures = [];
+let learningDatabase = {
+  requestCount: 0,
+  successfulImplementations: 0,
+  userPreferences: {},
+  developmentHistory: []
+};
+
+function loadFeatureData() {
+  const saved = localStorage.getItem('jarvisFeatures');
+  if (saved) {
+    const data = JSON.parse(saved);
+    featureRequests = data.requests || [];
+    implementedFeatures = data.implemented || [];
+    learningDatabase = data.learning || learningDatabase;
+  }
+}
+
+function saveFeatureData() {
+  localStorage.setItem('jarvisFeatures', JSON.stringify({
+    requests: featureRequests,
+    implemented: implementedFeatures,
+    learning: learningDatabase
+  }));
+}
+
+// toggleDevModal and submitFeatureRequest defined below (single authoritative versions)
+
+async function submitFeatureRequest_OLD_UNUSED() {
+  const desc = document.getElementById('featureDesc').value.trim();
+  const type = document.getElementById('featureType').value;
+  
+  if (!desc) {
+    alert('⚠️ Please describe the feature!');
+    return;
+  }
+  
+  const btn = event.target;
+  btn.disabled = true;
+  btn.textContent = '🔄 GENERATING...';
+  
+  const response = document.getElementById('devResponse');
+  response.style.display = 'block';
+  response.innerHTML = `<div style="color:var(--accent);font-size:12px;">🧠 JARVIS is generating your feature...<br>⏳ Please wait...</div>`;
+  
+  try {
+    // Ask JARVIS to generate code/feature
+    const prompt = `You are a code generation assistant. The user wants you to develop this feature:
+
+Feature Request: ${desc}
+Feature Type: ${type}
+Application: JARVIS AI Assistant (JavaScript/HTML/CSS)
+
+Please provide:
+1. A brief implementation plan
+2. HTML/CSS/JavaScript code snippet (if applicable)
+3. Integration instructions
+4. Estimated complexity (Easy/Medium/Hard)
+
+Format your response clearly with sections.`;
+
+    conversationHistory.push({ role: 'user', content: prompt });
+    const reply = await callJarvis(prompt);
+    
+    // Store feature request
+    const feature = {
+      id: Date.now(),
+      description: desc,
+      type: type,
+      timestamp: new Date().toLocaleString(),
+      status: 'pending',
+      implementation: reply,
+      language: currentLanguage
+    };
+    
+    featureRequests.push(feature);
+    learningDatabase.requestCount++;
+    
+    // Update user profile
+    if (!userProfile.stats.features) {
+      userProfile.stats.features = { implemented: 0, requested: 0 };
+    }
+    userProfile.stats.features.requested++;
+    saveProfile();
+    
+    response.innerHTML = `
+      <div style="background:rgba(0,255,136,0.1); border:1px solid rgba(0,255,136,0.3); border-radius:8px; padding:12px;">
+        <div style="color:var(--green);font-weight:700;margin-bottom:8px;">✓ FEATURE GENERATED</div>
+        <div style="color:var(--text);font-size:11px;line-height:1.6;background:var(--panel);padding:8px;border-radius:4px;max-height:200px;overflow-y:auto;">
+          ${reply.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+        </div>
+        <div style="margin-top:10px;display:flex;gap:8px;">
+          <button class="dev-btn-submit" onclick="implementFeature(${feature.id})">✓ IMPLEMENT NOW</button>
+          <button class="dev-btn-cancel" onclick="declineFeature(${feature.id})">✗ LATER</button>
+        </div>
+      </div>
+    `;
+    
+    saveFeatureData();
+    displayFeaturesList();
+    updateProfileUI();
+    
+  } catch (err) {
+    response.innerHTML = `<div style="color:var(--red);">❌ Error: ${err.message}</div>`;
+  }
+  
+  btn.disabled = false;
+  btn.textContent = '⚡ GENERATE & IMPLEMENT';
+}
+
+function implementFeature(featureId) {
+  const feature = featureRequests.find(f => f.id === featureId);
+  if (!feature) return;
+  
+  feature.status = 'implemented';
+  feature.implementedAt = new Date().toLocaleString();
+  implementedFeatures.push(feature);
+  featureRequests = featureRequests.filter(f => f.id !== featureId);
+  learningDatabase.successfulImplementations++;
+  learningDatabase.developmentHistory.push({
+    timestamp: new Date().toLocaleString(),
+    feature: feature.description,
+    type: feature.type,
+    implementation: feature.implementation.substring(0, 200)
+  });
+  
+  // Track user development preferences
+  if (!learningDatabase.userPreferences[feature.type]) {
+    learningDatabase.userPreferences[feature.type] = 0;
+  }
+  learningDatabase.userPreferences[feature.type]++;
+  
+  saveFeatureData();
+  
+  // Send tracking to server
+  fetch('/api/features/track', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      feature: feature.description,
+      type: feature.type,
+      status: 'implemented',
+      userProfile: userProfile
+    })
+  }).catch(err => console.log('📌 Server tracking note:', err.message));
+  
+  // Update user profile stats
+  if (!userProfile.stats.features) {
+    userProfile.stats.features = { implemented: 0, requested: 0 };
+  }
+  userProfile.stats.features.implemented++;
+  saveProfile();
+  
+  alert(`✅ FEATURE IMPLEMENTATION STARTED!
+
+📌 JARVIS is now working on:
+"${feature.description}"
+
+JARVIS has learned:
+✓ How to create ${feature.type} features
+✓ You prefer this development pattern
+✓ Success rate improved to ${Math.round(learningDatabase.successfulImplementations / learningDatabase.requestCount * 100)}%
+
+🧠 JARVIS will use this knowledge to:
+- Suggest similar features faster
+- Auto-complete implementation steps
+- Recommend related features
+- Personalize future development suggestions
+
+💡 Check the 🧠 JARVIS LEARNING panel to see insights!`);
+  
+  document.getElementById('featureDesc').value = '';
+  displayFeaturesList();
+}
+
+function declineFeature(featureId) {
+  featureRequests = featureRequests.filter(f => f.id !== featureId);
+  saveFeatureData();
+  displayFeaturesList();
+  alert('Feature declined.');
+}
+
+function displayFeaturesList() {
+  const container = document.getElementById('featuresList');
+  
+  if (implementedFeatures.length === 0 && featureRequests.length === 0) {
+    container.innerHTML = `<div style="color:var(--dim);font-size:11px;text-align:center;padding:12px;">
+      No features requested yet. 🚀 Request a feature to get started!
+    </div>`;
+    return;
+  }
+  
+  let html = '<div style="margin-top:12px;"><div class="dev-label">📦 FEATURE ROADMAP</div>';
+  
+  if (implementedFeatures.length > 0) {
+    html += '<div style="margin-bottom:12px;"><div style="font-size:10px;color:var(--accent);margin-bottom:6px;">✓ IMPLEMENTED:</div>';
+    implementedFeatures.slice(-3).forEach(f => {
+      html += `<div class="feature-card">
+        <div>${f.description}</div>
+        <div style="margin-top:6px;font-size:9px;">
+          <span class="feature-status implemented">✓ Implemented</span>
+          <span style="color:var(--dim);margin-left:8px;">${f.timestamp}</span>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+  
+  if (featureRequests.length > 0) {
+    html += '<div><div style="font-size:10px;color:#b88ff8;margin-bottom:6px;">⏳ PENDING:</div>';
+    featureRequests.forEach(f => {
+      html += `<div class="feature-card">
+        <div>${f.description}</div>
+        <div style="margin-top:6px;font-size:9px;">
+          <span class="feature-status pending">⏳ Pending</span>
+          <span style="color:var(--dim);margin-left:8px;">${f.type}</span>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+  
+  // Learning insights
+  html += `<div class="learning-insights">
+    <div style="font-weight:700;color:var(--accent);margin-bottom:8px;">🧠 JARVIS LEARNING</div>
+    <div class="learning-item"><span class="learning-icon">📊</span> Features Requested: ${learningDatabase.requestCount}</div>
+    <div class="learning-item"><span class="learning-icon">✓</span> Implementations: ${learningDatabase.successfulImplementations}</div>
+    <div class="learning-item"><span class="learning-icon">📚</span> Development Patterns: ${learningDatabase.developmentHistory.length}</div>
+    <div class="learning-item"><span class="learning-icon">🎯</span> Success Rate: ${learningDatabase.requestCount > 0 ? Math.round(learningDatabase.successfulImplementations / learningDatabase.requestCount * 100) : 0}%</div>
+  </div>`;
+  
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+// ═════════════════════════════════════════════════════════
+// DYNAMIC FEATURE DEVELOPMENT & LEARNING SYSTEM
+// ═════════════════════════════════════════════════════════
+
+let trainingData = {
+  features: [],
+  searches: [],
+  patterns: [],
+  learned: false
+};
+
+let developedFeatures = [];
+
+function toggleDevModal() {
+  const modal = document.getElementById('devModal');
+  if (!modal) return;
+  modal.classList.toggle('open');
+  if (modal.classList.contains('open')) {
+    document.getElementById('devResponse').style.display = 'none';
+    displayFeaturesList();
+  }
+}
+
+function selectFeatureType(btn) {
+  document.querySelectorAll('.ftype-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('featureType').value = btn.dataset.value;
+}
+
+function createDevModal() {
+  const modal = document.createElement('div');
+  modal.id = 'devModal';
+  modal.className = 'feature-builder-modal';
+  modal.innerHTML = `
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+      <h3 style="color:var(--accent); margin:0;">🚀 FEATURE DEVELOPMENT & LEARNING</h3>
+      <button onclick="toggleDevModal()" style="background:none; border:none; color:var(--text); cursor:pointer; font-size:18px;">✕</button>
+    </div>
+    
+    <div style="margin-bottom:12px;">
+      <label style="color:var(--dim); font-family:'Share Tech Mono'; font-size:10px;">📋 WHAT DO YOU NEED?</label>
+      <textarea id="featureDesc" class="feature-request-input" placeholder="Example: Add a search feature for temples, Create a calculator, Add note-taking feature..."></textarea>
+    </div>
+    
+    <button class="dev-button" onclick="submitFeatureRequest()">⚡ GENERATE FEATURE</button>
+    <button class="dev-button" onclick="performSearch()" style="background:rgba(0,229,255,0.2);">🔍 SEARCH & LEARN</button>
+    
+    <div id="devResponse" style="margin-top:12px;"></div>
+    <div id="knowledgeBase" style="margin-top:12px; max-height:200px; overflow-y:auto;"></div>
+  `;
+  document.body.appendChild(modal);
+  modal.classList.add('open');
+}
+
+function displayLearningKnowledge() {
+  const kb = document.getElementById('knowledgeBase');
+  if (!kb) return;
+  
+  const modal = document.getElementById('devModal');
+  if (!modal) return;
+  
+  let html = '<div style="border-top:1px solid var(--border); padding-top:12px;"><h4 style="color:#b88ff8; font-size:10px; margin-bottom:8px;">📚 TRAINING & LEARNED PATTERNS:</h4>';
+  
+  if (trainingData.features.length > 0) {
+    html += `<div class="knowledge-item"><span class="knowledge-label">Features Developed:</span> ${trainingData.features.length}</div>`;
+  }
+  
+  if (trainingData.searches.length > 0) {
+    html += `<div class="knowledge-item"><span class="knowledge-label">Searches Performed:</span> ${trainingData.searches.length}</div>`;
+    trainingData.searches.slice(-3).forEach(search => {
+      html += `<div class="knowledge-item" style="margin-left:8px;">🔍 ${search}</div>`;
+    });
+  }
+  
+  if (trainingData.patterns.length > 0) {
+    html += `<div class="knowledge-item"><span class="knowledge-label">Learned Patterns:</span> ${trainingData.patterns.length}</div>`;
+  }
+  
+  html += '</div>';
+  kb.innerHTML = html;
+}
+
+async function submitFeatureRequest() {
+  const desc = document.getElementById('featureDesc')?.value;
+  if (!desc) {
+    alert('Please describe what feature you need');
+    return;
+  }
+  
+  const response = document.getElementById('devResponse');
+  response.style.display = 'block';
+  response.innerHTML = '<div class="feature-status status-building">⚙️ JARVIS is analyzing your request and generating code...</div>';
+  
+  try {
+    // Send request to server for feature generation
+    const result = await fetch('/api/develop-feature', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        description: desc,
+        userProfile,
+        currentMode,
+        language: currentLanguage
+      })
+    });
+    
+    const data = await result.json();
+    
+    // Train on this feature request
+    trainingData.features.push(desc);
+    trainingData.patterns.push({
+      request: desc,
+      type: data.type || 'custom',
+      timestamp: new Date()
+    });
+    localStorage.setItem('jarvisTrainingData', JSON.stringify(trainingData));
+    
+    if (data.success) {
+      // Store generated data so the apply button can access it
+      window._pendingFeature = data;
+
+      response.innerHTML = `
+        <div class="feature-status status-complete" style="padding:10px;">
+          ✅ <strong>${data.featureName}</strong> — code generated!<br>
+          <small style="color:var(--dim);">${data.description}</small>
+          <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+            <button class="dev-btn-submit" onclick="applyFeatureToLocalFiles()">
+              🔧 APPLY TO LOCAL FILES
+            </button>
+            <button class="dev-button" onclick="window._pendingFeature=null;document.getElementById('devResponse').innerHTML='';" style="font-size:11px;">
+              ✗ DISCARD
+            </button>
+          </div>
+        </div>
+      `;
+
+      // Also show code in chat
+      developedFeatures.push(data);
+      addMessage('ai', `✅ **Feature Developed!**\n**${data.featureName}**\n${data.description}\n\n**Code Generated:**\n\`\`\`${data.language || 'javascript'}\n${data.code}\n\`\`\`\n\nClick **🔧 APPLY TO LOCAL FILES** in the dev panel to write this to the project.`);
+
+    } else {
+      response.innerHTML = `<div class="feature-status status-error">❌ ${data.error || 'Feature generation failed'}</div>`;
+    }
+  } catch(err) {
+    response.innerHTML = `<div class="feature-status status-error">❌ Error: ${err.message}</div>`;
+  }
+}
+
+async function applyFeatureToLocalFiles() {
+  const feat = window._pendingFeature;
+  if (!feat) { alert('No pending feature to apply.'); return; }
+
+  const resp = document.getElementById('devResponse');
+  resp.innerHTML = `<div class="feature-status status-building">🔧 Writing "${feat.featureName}" to local files...</div>`;
+
+  try {
+    const result = await fetch('/api/apply-feature', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        code: feat.code,
+        type: feat.type,
+        featureName: feat.featureName
+      })
+    });
+
+    const out = await result.json();
+
+    if (out.success) {
+      resp.innerHTML = `
+        <div class="feature-status status-complete" style="padding:10px;">
+          ✅ <strong>${feat.featureName}</strong> applied to <code>${out.file}</code>!<br>
+          <small style="color:var(--dim);">${out.message}</small>
+          ${out.requiresReload   ? `<br><button class="dev-btn-submit" style="margin-top:8px;" onclick="location.reload()">🔄 RELOAD PAGE</button>` : ''}
+          ${out.requiresRestart  ? `<br><small style="color:#f90;">⚠️ Restart the server (Ctrl+C → node server.js) to activate backend changes.</small>` : ''}
+        </div>
+      `;
+      window._pendingFeature = null;
+
+      // Track in learning database
+      trainingData.features.push(feat.featureName);
+      localStorage.setItem('jarvisTrainingData', JSON.stringify(trainingData));
+
+    } else {
+      resp.innerHTML = `<div class="feature-status status-error">❌ Apply failed: ${out.error}</div>`;
+    }
+  } catch(err) {
+    resp.innerHTML = `<div class="feature-status status-error">❌ Error: ${err.message}</div>`;
+  }
+}
+
+async function performSearch() {
+  const query = document.getElementById('featureDesc')?.value;
+  if (!query) {
+    alert('Please enter a search term');
+    return;
+  }
+  
+  const response = document.getElementById('devResponse');
+  response.innerHTML = '<div class="feature-status status-building">🔍 JARVIS is searching and learning...</div>';
+  
+  try {
+    const result = await fetch('/api/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: query,
+        language: currentLanguage
+      })
+    });
+    
+    const data = await result.json();
+    
+    // Record search in training data
+    trainingData.searches.push(query);
+    localStorage.setItem('jarvisTrainingData', JSON.stringify(trainingData));
+    
+    if (data.results && data.results.length > 0) {
+      let html = '<div style="border-top:1px solid var(--border); padding-top:12px;">';
+      data.results.slice(0, 3).forEach((result, idx) => {
+        html += `
+          <div class="search-result">
+            <div class="search-result-title">${idx + 1}. ${result.title}</div>
+            <div class="search-result-snippet">${result.snippet}</div>
+            <div class="search-result-url">🔗 ${result.url}</div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      response.innerHTML = html;
+      
+      // Add to chat
+      addMessage('ai', `📚 **Search Results for "${query}":**\n\n${data.results.slice(0, 3).map((r, i) => `${i + 1}. **${r.title}**\n   ${r.snippet}\n   🔗 ${r.url}`).join('\n\n')}`);
+    } else {
+      response.innerHTML = '<div class="feature-status status-error">❌ No results found</div>';
+    }
+  } catch(err) {
+    response.innerHTML = `<div class="feature-status status-error">❌ Search Error: ${err.message}</div>`;
+  }
+}
+
+function loadTrainingData() {
+  const saved = localStorage.getItem('jarvisTrainingData');
+  if (saved) {
+    trainingData = JSON.parse(saved);
+    console.log('📚 Training data loaded:', trainingData);
+  }
+}
+
+function showDevelopedFeatures() {
+  let html = '<div style="margin-top:16px; border-top:1px solid var(--border); padding-top:12px;">';
+  html += '<h4 style="color:var(--accent); font-size:11px; margin-bottom:8px;">🎉 RECENTLY DEVELOPED FEATURES:</h4>';
+  
+  if (developedFeatures.length === 0) {
+    html += '<span style="color:var(--dim); font-size:10px;">No features developed yet</span>';
+  } else {
+    developedFeatures.slice(-5).forEach(feat => {
+      html += `
+        <div style="padding:8px; margin-bottom:6px; border-radius:4px; background:rgba(0,255,136,0.08); border-left:2px solid var(--green);">
+          <div style="color:var(--green); font-weight:700; font-size:10px;">✅ ${feat.featureName}</div>
+          <div style="color:var(--text); font-size:9px;">${feat.description}</div>
+        </div>
+      `;
+    });
+  }
+  
+  html += '</div>';
+  return html;
+}
+
+// Load training data on startup
+loadTrainingData();
+
+
+// ── Initialize Voices ──
+function initializeVoices() {
+  const voices = window.speechSynthesis.getVoices();
+  const langMap = {
+    'ta': 'Tamil',
+    'hi': 'Hindi',
+    'en': 'English',
+    'es': 'Spanish',
+    'fr': 'French'
+  };
+  
+  console.log('🎙️ Available Voices:');
+  for (const [lang, name] of Object.entries(langMap)) {
+    const available = voices.filter(v => v.lang.startsWith(lang)).length > 0;
+    const status = available ? '✓' : '✗';
+    console.log(`${status} ${name} (${lang})`);
+  }
+  console.log('🔊 Full voices list:', voices.map(v => `${v.name} (${v.lang})`).join(', '));
+}
+
+// Initialize voices when available
+if (window.speechSynthesis.onvoiceschanged !== undefined) {
+  window.speechSynthesis.onvoiceschanged = initializeVoices;
+}
+
+// Also call on load
+window.addEventListener('load', () => {
+  setTimeout(initializeVoices, 500);
+});
+</script>
+</body>
+</html>

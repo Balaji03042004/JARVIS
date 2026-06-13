@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 260px;
+      font-family: 'Segoe UI', sans-serif;
+      background: #0a0a0a;
+      color: #e0e0e0;
+    }
+    .header {
+      background: linear-gradient(135deg, #1a1a2e, #16213e);
+      padding: 14px 16px;
+      border-bottom: 1px solid #00d4ff33;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo { font-size: 22px; }
+    .title { font-size: 15px; font-weight: 700; color: #00d4ff; letter-spacing: 1px; }
+    .subtitle { font-size: 10px; color: #666; }
+    .status-bar {
+      padding: 10px 16px;
+      background: #111;
+      border-bottom: 1px solid #222;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #ff4444;
+      transition: background 0.3s;
+    }
+    .dot.connected { background: #00ff88; box-shadow: 0 0 6px #00ff88; }
+    .status-text { font-size: 11px; color: #888; }
+    .page-info {
+      padding: 10px 16px;
+      background: #111;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .page-label { font-size: 10px; color: #555; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px; }
+    .page-title { font-size: 11px; color: #ccc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .platform-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+    .platform-youtube  { background: #ff0000; color: #fff; }
+    .platform-google   { background: #4285f4; color: #fff; }
+    .platform-github   { background: #333; color: #fff; }
+    .platform-web      { background: #333; color: #aaa; }
+    .quick-btns {
+      padding: 12px 16px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .quick-btns.yt-mode { grid-template-columns: 1fr 1fr 1fr; }
+    button {
+      padding: 8px 6px;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      color: #ccc;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    button:hover { background: #252525; border-color: #00d4ff55; color: #00d4ff; }
+    .footer {
+      padding: 8px 16px;
+      text-align: center;
+      font-size: 9px;
+      color: #333;
+      border-top: 1px solid #1a1a1a;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">🤖</div>
+    <div>
+      <div class="title">JARVIS</div>
+      <div class="subtitle">Browser Control</div>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <div class="dot" id="dot"></div>
+    <div class="status-text" id="status-text">Connecting to JARVIS...</div>
+  </div>
+
+  <div class="page-info">
+    <div class="page-label">Current Page</div>
+    <div class="page-title" id="page-title">—</div>
+    <span class="platform-badge platform-web" id="platform-badge">web</span>
+  </div>
+
+  <div class="quick-btns" id="quick-btns">
+    <button onclick="cmd('scroll_down')">↓ Scroll</button>
+    <button onclick="cmd('scroll_up')">↑ Scroll</button>
+    <button onclick="cmd('scroll_top')">⬆ Top</button>
+    <button onclick="cmd('scroll_bottom')">⬇ Bottom</button>
+  </div>
+
+  <div class="footer">Say commands to JARVIS in chat</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

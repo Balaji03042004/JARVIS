@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  /* ══ DARK CORE BACKGROUNDS ══ */
+  --bg-base:    #07050F;
+  --bg-panel:   #0B0918;
+  --bg-raised:  #100E1C;
+  --bg-card:    #13112099;
+  --bg-input:   #0D0B1A;
+  --bg-overlay: rgba(10,8,20,0.97);
+
+  /* ══ BORDERS — subtle dark glass ══ */
+  --border-subtle:  rgba(255,184,0,0.06);
+  --border-default: rgba(255,184,0,0.13);
+  --border-strong:  rgba(255,184,0,0.28);
+  --border-red:     rgba(255,60,40,0.22);
+  --border-blue:    rgba(80,160,255,0.18);
+
+  /* ══ ACCENT — JARVIS GOLD (neon) ══ */
+  --accent:       #FFB800;
+  --accent-dim:   rgba(255,184,0,0.09);
+  --accent-glow:  rgba(255,184,0,0.35);
+  --accent-hover: #FFCA33;
+  --accent-soft:  rgba(255,184,0,0.06);
+
+  /* ══ SECONDARY — ARC REACTOR RED ══ */
+  --purple:       #FF3B30;
+  --purple-dim:   rgba(255,59,48,0.1);
+  --purple-glow:  rgba(255,59,48,0.35);
+
+  /* ══ STATUS COLORS ══ */
+  --green:        #00E87C;
+  --green-dim:    rgba(0,232,124,0.1);
+  --green-glow:   rgba(0,232,124,0.3);
+
+  --red:          #FF4444;
+  --red-dim:      rgba(255,68,68,0.1);
+  --red-glow:     rgba(255,68,68,0.3);
+
+  --amber:        #FF9500;
+  --amber-dim:    rgba(255,149,0,0.1);
+
+  --cyan:         #00D4FF;
+  --cyan-dim:     rgba(0,212,255,0.1);
+  --cyan-glow:    rgba(0,212,255,0.3);
+
+  /* ══ TEXT — warm light on dark ══ */
+  --text-primary:   #F0EAFF;
+  --text-secondary: #9B93C2;
+  --text-muted:     #4E4970;
+  --text-code:      #FFB800;
+  --text-dim:       #2E2A45;
+
+  /* ══ SHADOWS (deep) ══ */
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.55);
+  --shadow-md: 0 4px 20px rgba(0,0,0,0.65);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.75);
+  --shadow-xl: 0 20px 60px rgba(0,0,0,0.85);
+  --glow-gold: 0 0 20px rgba(255,184,0,0.25), 0 0 40px rgba(255,184,0,0.1);
+  --glow-red:  0 0 20px rgba(255,59,48,0.25), 0 0 40px rgba(255,59,48,0.1);
+
+  /* ══ FONTS ══ */
+  --font-ui:   'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace;
+
+  /* ══ SPACING ══ */
+  --sp1: 4px;  --sp2: 8px;  --sp3: 12px;
+  --sp4: 16px; --sp5: 20px; --sp6: 24px; --sp8: 32px;
+
+  /* ══ RADIUS ══ */
+  --r-sm: 6px; --r-md: 10px; --r-lg: 14px; --r-xl: 20px; --r-full: 9999px;
+
+  /* ══ TRANSITIONS ══ */
+  --t-fast:   0.14s ease;
+  --t-normal: 0.22s ease;
+  --t-slow:   0.38s ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,184,0,0.18); border-radius: var(--r-full); }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,184,0,0.4); }
+
+::selection { background: rgba(255,184,0,0.22); color: #FFD066; }

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JARVIS — AI Command Interface</title>
+
+  <!-- ── Styles ── -->
+  <link rel="stylesheet" href="css/variables.css"/>
+  <link rel="stylesheet" href="css/animations.css"/>
+  <link rel="stylesheet" href="css/layout.css"/>
+  <link rel="stylesheet" href="css/chat.css"/>
+  <link rel="stylesheet" href="css/components.css"/>
+  <link rel="stylesheet" href="css/modals.css"/>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     HEADER
+══════════════════════════════════════ -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">⬡</div>
+    <div>
+      <div class="logo-text">JARVIS</div>
+      <div class="logo-sub">INTELLIGENT ASSISTANT</div>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <div class="status-pill">
+      <div class="status-dot" id="statusDot"></div>
+      <span class="status-label" id="statusLabel">SYSTEM ONLINE</span>
+    </div>
+    <button class="header-btn" onclick="toggleProfile()" title="User Profile">👤</button>
+    <button class="header-btn" onclick="toggleConversationHistory()" title="Saved Chats">📚</button>
+  </div>
+</header>
+
+<!-- ── Language Bar ── -->
+<div class="lang-bar">
+  <span class="lang-label">LANG:</span>
+  <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">EN</button>
+  <button class="lang-btn"        data-lang="ta" onclick="setLanguage('ta')">தமிழ்</button>
+  <button class="lang-btn"        data-lang="hi" onclick="setLanguage('hi')">हिन्दी</button>
+  <button class="lang-btn"        data-lang="es" onclick="setLanguage('es')">ES</button>
+  <button class="lang-btn"        data-lang="fr" onclick="setLanguage('fr')">FR</button>
+  <button class="lang-btn"        data-lang="de" onclick="setLanguage('de')">DE</button>
+</div>
+
+<!-- ══════════════════════════════════════
+     MAIN LAYOUT
+══════════════════════════════════════ -->
+<div class="main-layout">
+
+  <!-- ── Profile Side Panel ── -->
+  <div class="side-panel" id="profilePanel">
+    <div class="side-panel-header">
+      <span class="side-panel-title">👤 USER PROFILE</span>
+      <button class="modal-close" onclick="toggleProfile()">✕</button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Name</label>
+      <input type="text" class="form-input" id="userName" placeholder="Your name" onchange="saveProfile()"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Preferred Domain</label>
+      <select class="form-select" id="userDomain" onchange="saveProfile()">
+        <option value="">General</option>
+        <option value="java">Java Development</option>
+        <option value="javascript">JavaScript</option>
+        <option value="newgen">Newgen iBPS</option>
+        <option value="sql">Database / SQL</option>
+        <option value="devops">DevOps</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Preferences</label>
+      <label class="check-row"><input type="checkbox" id="prefCode"    onchange="saveProfile()"/> Show code examples</label>
+      <label class="check-row"><input type="checkbox" id="prefExplain" onchange="saveProfile()"/> Detailed explanations</label>
+      <label class="check-row"><input type="checkbox" id="prefQuick"   onchange="saveProfile()"/> Quick answers</label>
+    </div>
+
+    <div style="margin-top:auto;padding-top:16px;border-top:1px solid var(--border-subtle)">
+      <div class="side-panel-title" style="margin-bottom:12px">📊 SESSION STATS</div>
+      <div class="stat-card"><span class="stat-label">Messages</span>  <span class="stat-value" id="statMessages">0</span></div>
+      <div class="stat-card"><span class="stat-label">Avg Mood</span>   <span class="stat-value" id="statSentiment">😐</span></div>
+      <div class="stat-card"><span class="stat-label">Topics</span>     <span class="stat-value" id="statTopics">0</span></div>
+      <div class="stat-card"><span class="stat-label">Feedback</span>   <span class="stat-value" id="statFeedback">—</span></div>
+      <button class="btn btn-secondary" style="width:100%;margin-top:10px;font-size:11px" onclick="exportProfile()">📥 EXPORT PROFILE</button>
+    </div>
+  </div>
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <p class="sidebar-label">// COMMAND MODE</p>
+      <button class="mode-btn active" onclick="setMode(this,'general')">
+        <span class="mode-icon">🧠</span>
+        <div class="mode-info"><span class="mode-name">General AI</span><span class="mode-sub">CHAT · ANALYZE</span></div>
+      </button>
+      <button class="mode-btn" onclick="setMode(this,'code')">
+        <span class="mode-icon">💻</span>
+        <div class="mode-info"><span class="mode-name">Code Writer</span><span class="mode-sub">JAVA · JS · SQL</span></div>
+      </button>
+      <button class="mode-btn" onclick="setMode(this,'ibps')">
+        <span class="mode-icon">⚙️</span>
+        <div class="mode-info"><span class="mode-name">Newgen iBPS</span><span class="mode-sub">BPM · IFORMS</span></div>
+      </button>
+      <button class="mode-btn" onclick="setMode(this,'debug')">
+        <span class="mode-icon">🔍</span>
+        <div class="mode-info"><span class="mode-name">Debug Mode</span><span class="mode-sub">ANALYZE · FIX</span></div>
+      </button>
+      <button class="mode-btn" onclick="setMode(this,'sql')">
+        <span class="mode-icon">🗄️</span>
+        <div class="mode-info"><span class="mode-name">SQL / DBX</span><span class="mode-sub">QUERY · OPTIMIZE</span></div>
+      </button>
+    </div>
+
+    <div class="sidebar-section sidebar-bottom">
+      <p class="sidebar-label">// HISTORY</p>
+      <div class="hist-list" id="historyList">
+        <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted)">No history yet.</span>
+      </div>
+      <button class="sidebar-action-btn danger"  onclick="clearChat()">⟳ CLEAR CHAT</button>
+      <button class="sidebar-action-btn"         onclick="toggleConversationHistory()">📚 SAVED CHATS</button>
+      <button class="sidebar-action-btn purple"  onclick="toggleDevModal()">🚀 DEVELOP FEATURE</button>
+    </div>
+  </aside>
+
+  <!-- ── Chat Area ── -->
+  <div class="chat-area">
+
+    <div class="messages" id="messages">
+      <div class="welcome" id="welcomeScreen">
+        <div class="welcome-icon">⬡</div>
+        <h2>JARVIS READY</h2>
+        <p>Your Intelligent Assistant is online. Speak or type any command — write code, debug, analyze, or ask anything.</p>
+        <div class="chips">
+          <div class="chip" onclick="sendChip(this)">Write a Java method</div>
+          <div class="chip" onclick="sendChip(this)">Create a SQL query</div>
+          <div class="chip" onclick="sendChip(this)">Write an iForms validation</div>
+          <div class="chip" onclick="sendChip(this)">Explain BPM workflows</div>
+          <div class="chip" onclick="sendChip(this)">Debug this code</div>
+          <div class="chip" onclick="sendChip(this)">Write a REST API call</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-area">
+      <div class="input-wrapper">
+        <textarea id="userInput"
+          placeholder="Type a command or speak…  (Shift+Enter for new line)"
+          rows="1"
+          onkeydown="handleKey(event)"
+          oninput="autoResize(this)"></textarea>
+        <div class="btn-group">
+          <button class="icon-btn spk-btn" id="speakerBtn" onclick="toggleSpeaker()" title="Toggle Speaker">🔊</button>
+          <button class="icon-btn mic-btn"  id="micBtn"     onclick="toggleMic()"     title="Voice Input">🎤</button>
+          <button class="icon-btn send-btn" id="sendBtn"    onclick="sendMessage()"   title="Send">➤</button>
+        </div>
+      </div>
+      <div class="input-footer">
+        <span>Enter to send &nbsp;·&nbsp; Shift+Enter for new line</span>
+        <span class="mode-indicator" id="modeIndicator">⬡ GENERAL AI</span>
+      </div>
+    </div>
+  </div>
+</div><!-- /main-layout -->
+
+<!-- ══════════════════════════════════════
+     CONVERSATION HISTORY PANEL
+══════════════════════════════════════ -->
+<div id="convHistory">
+  <h3 style="color:var(--accent);margin-bottom:12px;font-size:13px">📚 SAVED CONVERSATIONS</h3>
+  <div class="storage-controls">
+    <button class="storage-btn" onclick="exportAllConversations()">📥 EXPORT</button>
+    <button class="storage-btn" onclick="clearAllConversations()" style="background:var(--red-dim);color:var(--red)">🗑️ CLEAR ALL</button>
+    <button class="storage-btn" onclick="toggleConversationHistory()" style="background:transparent;color:var(--text-muted)">✕ CLOSE</button>
+  </div>
+  <div id="convList" style="overflow-y:auto;flex:1"></div>
+</div>
+
+<!-- ══════════════════════════════════════
+     FEATURE DEVELOPMENT MODAL
+══════════════════════════════════════ -->
+<div class="modal-overlay" id="devModal">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <span class="modal-title">🚀 FEATURE DEVELOPMENT &amp; LEARNING</span>
+      <button class="modal-close" onclick="toggleDevModal()">✕</button>
+    </div>
+
+    <div class="dev-section">
+      <label class="dev-label">📋 DESCRIBE THE FEATURE</label>
+      <textarea class="form-textarea" id="featureDesc"
+        placeholder="Example: Add a dark mode toggle, Create a notes panel, Add a timer widget…"></textarea>
+    </div>
+
+    <div class="dev-section">
+      <label class="dev-label">🎯 FEATURE TYPE</label>
+      <div class="ftype-group">
+        <button class="ftype-btn active" data-value="ui"          onclick="selectFeatureType(this)">🖥️ UI</button>
+        <button class="ftype-btn"        data-value="api"         onclick="selectFeatureType(this)">⚙️ API</button>
+        <button class="ftype-btn"        data-value="analysis"    onclick="selectFeatureType(this)">📊 Analysis</button>
+        <button class="ftype-btn"        data-value="integration" onclick="selectFeatureType(this)">🔗 Integration</button>
+        <button class="ftype-btn"        data-value="other"       onclick="selectFeatureType(this)">💡 Other</button>
+      </div>
+      <input type="hidden" id="featureType" value="ui"/>
+    </div>
+
+    <div class="dev-action-row">
+      <button class="btn btn-primary"   onclick="submitFeatureRequest()">⚡ GENERATE &amp; APPLY</button>
+      <button class="btn btn-secondary" onclick="performSearch()">🔍 SEARCH</button>
+      <button class="btn btn-secondary" onclick="toggleDevModal()">CANCEL</button>
+    </div>
+
+    <div id="devResponse"  style="display:none;margin-top:16px"></div>
+    <div id="featuresList" style="margin-top:16px"></div>
+  </div>
+</div>
+
+<!-- FAB Buttons -->
+<button class="fab" id="devButton"       onclick="toggleDevModal()"     title="Develop a Feature">🚀</button>
+<button class="fab" id="templeSearchBtn" onclick="toggleTempleSearch()" title="Temple Search">🛕</button>
+
+<!-- ══════════════════════════════════════
+     TEMPLE SEARCH PANEL
+══════════════════════════════════════ -->
+<div id="templeSearchPanel">
+  <div class="ts-header">
+    <span class="ts-title">🛕 TEMPLE SEARCH</span>
+    <span class="ts-close" onclick="toggleTempleSearch()">✕</span>
+  </div>
+  <div class="ts-input-row">
+    <input id="templeQuery" type="text" placeholder="Search by name, deity, location…"
+      onkeydown="if(event.key==='Enter')runTempleSearch()"/>
+    <button class="ts-search-btn" onclick="runTempleSearch()">SEARCH</button>
+  </div>
+  <div class="ts-filter">
+    <button class="ts-filter-btn active" data-filter="all"        onclick="setTempleFilter(this)">All</button>
+    <button class="ts-filter-btn"        data-filter="Hindu"      onclick="setTempleFilter(this)">Hindu</button>
+    <button class="ts-filter-btn"        data-filter="Buddhist"   onclick="setTempleFilter(this)">Buddhist</button>
+    <button class="ts-filter-btn"        data-filter="Jain"       onclick="setTempleFilter(this)">Jain</button>
+    <button class="ts-filter-btn"        data-filter="Sikh"       onclick="setTempleFilter(this)">Sikh</button>
+    <button class="ts-filter-btn"        data-filter="Tamil Nadu" onclick="setTempleFilter(this)">Tamil Nadu</button>
+  </div>
+  <div class="ts-results" id="tsResults">
+    <div class="ts-empty">Type a temple name, deity, or location and click SEARCH</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SCRIPTS  (order matters)
+══════════════════════════════════════ -->
+<script src="js/config.js"></script>
+<script src="js/state.js"></script>
+<script src="js/tts.js"></script>
+<script src="js/speech.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/profile.js"></script>
+<script src="js/sentiment.js"></script>
+<script src="js/chat.js"></script>
+<script src="js/conversations.js"></script>
+<script src="js/features.js"></script>
+<script src="js/temples.js"></script>
+<script src="js/app.js"></script>
+
+</body>
+</html>
